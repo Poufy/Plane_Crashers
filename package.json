@@ -1,0 +1,13 @@
+{
+  "name": "project_planes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Noor Al Deen Al Fayad",
+  "license": "GPL-3.0"
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plane Crashers</title>
+    <canvas id="ctx" width="800" height="600"></canvas>
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+
+  <script>
+      var ctx = document.getElementById("ctx").getContext("2d");
+      ctx.font = '30px Arial';
+      var socket = io();
+      //setting default values so game does not bug out by sending null mouseX and mouseY values when cursor is initially off the canvas.
+      var mouseX = 0;
+      var mouseY = 0;
+
+  //emiting the mouse Coordinates to the server to calculate the angle there.
+document.addEventListener("mousemove", function(event){
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+});
+socket.on('newPosition', function(data){
+  //clear the screen
+  ctx.fillStyle = "#000000"
+  ctx.fillRect(0,0,800,600);
+  socket.emit('mouseCoordinates', {mouseX: mouseX, mouseY: mouseY});
+ for(var i in data.ships){
+
+   ctx.save();
+   ctx.translate(data.ships[i].x, data.ships[i].y);
+   console.log(data.ships[i]);
+   ctx.rotate(data.ships[i].angle);
+   ctx.fillStyle = "#00FF00"
+   ctx.fillRect(10, 10,30,30);
+   ctx.restore();
+   for(var k in data.ships[i].bullets){
+     ctx.save();
+     ctx.translate(data.ships[i].bullets[k].x,data.ships[i].bullets[k].y);
+    // console.log(data.ships[i]);
+     ctx.rotate(data.ships[i].bullets[k].angle);
+     ctx.fillStyle = "#1ABC9C"
+     ctx.fillRect(10, 10,10,10);
+     ctx.restore();
+   }
+
+}
+
+});
+document.onkeydown = function(event){
+  if(event.keyCode === 87)
+    socket.emit('thrust', true);
+}
+
+document.onmousedown = function(event){
+  socket.emit('fire');
+}
+document.onkeyup = function(event){
+  if(event.keyCode === 87)
+    socket.emit('thrust', false);
+}
+  </script>
+  </head>
+  </html>
