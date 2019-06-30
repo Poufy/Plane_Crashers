@@ -36,8 +36,8 @@ var Bullet = function(x,y,angle){
     self.toRemove = false;
     self.velocity = 6;
 
-    this.check = function(){
-      if(self.x > 800 || self.y > 600 || self.x < 0 || self.y < 0)
+    self.checkBounds = function(){
+      if(self.x > 820 || self.y > 600 || self.x < 0 || self.y < 0)
         self.toRemove = true;
     }
     return self;
@@ -122,9 +122,16 @@ setInterval(function(){
     var ship = gameState.ships[i];
     ship.update();
 
-    for(var j in gameState.ships[i].bullets){
+    for(var j in ship.bullets){
+      ship.bullets[j].checkBounds();
+      if(ship.bullets[j].toRemove){
+          delete ship.bullets[j];
+          //console.log('deleted');
+          continue;
 
-      gameState.ships[i].bullets[j].update();
+        }
+
+      ship.bullets[j].update();
 
     }
 
