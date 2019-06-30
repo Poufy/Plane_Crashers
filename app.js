@@ -71,49 +71,63 @@ var Ship = function(x,y,angle){
 }
 
 io.sockets.on('connection', function(socket){
+
   console.log('connected');
-
-
   gameState.ships[socket.id] = new Ship(300,300, 0);
 
+  var playerName = ("" + socket.id).slice(2,7);
+  //add name attribute to ships later
+  io.sockets.emit('newPlayer', gameState.ships);
 
+      socket.on('fire', function(){
 
+      var ship = gameState.ships[socket.id];
+      ship.bullets[Math.random()] = new Bullet(ship.x, ship.y, ship.angle);
 
-socket.on('fire', function(){
-  var ship = gameState.ships[socket.id];
-  ship.bullets[Math.random()] = new Bullet(ship.x, ship.y, ship.angle);
-});
+    });
 
-socket.on('thrust', function(data){
-  gameState.ships[socket.id].isThrusting = data;
-});
+    socket.on('thrust', function(data){
 
-socket.on('mouseCoordinates', function(data){
-  var ship = gameState.ships[socket.id];
-  var angle = Math.atan2(data.mouseX - ship.x, - (data.mouseY - ship.y));  
-  ship.angle = angle;
+      gameState.ships[socket.id].isThrusting = data;
 
+    });
 
-});
+    socket.on('messageToServer', function(data){
+      var playerName = ("" + socket.id).slice(2,7);
+      io.sockets.emit('messageToClients', playerName + ': ' + data);
+    });
 
-socket.on('disconnect', function(){
-  delete gameState.ships[socket.id];
-  console.log('disconnected');
-  });
+    socket.on('mouseCoordinates', function(data){
 
+      var ship = gameState.ships[socket.id];
+      var angle = Math.atan2(data.mouseX - ship.x, - (data.mouseY - ship.y));
+      ship.angle = angle;
+
+    });
+
+    socket.on('disconnect', function(){
+
+      delete gameState.ships[socket.id];
+      console.log('disconnected');
+
+      });
 
 });
 
 setInterval(function(){
-
   var pack = [];
+
   for(var i in gameState.ships){
-    console.log(ship);
+
     var ship = gameState.ships[i];
     ship.update();
+
     for(var j in gameState.ships[i].bullets){
+
       gameState.ships[i].bullets[j].update();
+
     }
+
 }
 
   io.sockets.emit('newPosition', gameState);
