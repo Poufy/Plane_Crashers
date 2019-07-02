@@ -3,6 +3,7 @@ var app = express();
 var server = require('http').Server(app);
 var socketIO = require('socket.io');
 var io = socketIO(server);
+var userName;
 var gameState = {
   ships: {},
   //bullets: {}
@@ -11,7 +12,7 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/public/index.html');
 });
 
-app.use('client', express.static(__dirname + '/client'));
+ app.use(express.static('public'));
 
 server.listen(3000, function(){
   console.log('listening on port: 2000');
@@ -37,7 +38,7 @@ var Bullet = function(x,y,angle){
     self.velocity = 6;
 
     self.checkBounds = function(){
-      if(self.x > 820 || self.y > 600 || self.x < 0 || self.y < 0)
+      if(self.x > 850 || self.y > 670 || self.x < -40 || self.y < -40)
         self.toRemove = true;
     }
     return self;
@@ -47,6 +48,7 @@ var Ship = function(x,y,angle){
   var self = Entity(x,y,angle);
   self.isThrusting =  false;
   self.maxVelocity =  8;
+  self.userName = 'unknown';
   self.bullets = {};
   self.update = function(){
     if(self.isThrusting){
@@ -72,12 +74,16 @@ var Ship = function(x,y,angle){
 
 io.sockets.on('connection', function(socket){
 
-  console.log('connected');
-  gameState.ships[socket.id] = new Ship(300,300, 0);
+      console.log('connected');
+      gameState.ships[socket.id] = new Ship(300,300, 0);
 
-  var playerName = ("" + socket.id).slice(2,7);
-  //add name attribute to ships later
-  io.sockets.emit('newPlayer', gameState.ships);
+      //after recieving the userName from the client
+      socket.on('userName', function(data){
+          gameState.ships[socket.id].userName = data;
+          io.sockets.emit('newPlayer', gameState.ships);
+      });
+
+
 
       socket.on('fire', function(){
 
@@ -93,8 +99,7 @@ io.sockets.on('connection', function(socket){
     });
 
     socket.on('messageToServer', function(data){
-      var playerName = ("" + socket.id).slice(2,7);
-      io.sockets.emit('messageToClients', playerName + ': ' + data);
+      io.sockets.emit('messageToClients',  data);
     });
 
     socket.on('mouseCoordinates', function(data){
@@ -108,6 +113,8 @@ io.sockets.on('connection', function(socket){
     socket.on('disconnect', function(){
 
       delete gameState.ships[socket.id];
+      //emiting the list after someone disconnects for it to be updated.
+      io.sockets.emit('newPlayer', gameState.ships);
       console.log('disconnected');
 
       });
@@ -132,7 +139,7 @@ setInterval(function(){
         }
 
       ship.bullets[j].update();
-
+      //
     }
 
 }
@@ -140,3 +147,8 @@ setInterval(function(){
   io.sockets.emit('newPosition', gameState);
 
 }, 1000/60)
+
+
+function getDistance()  {
+    //check distance of bullet
+}
