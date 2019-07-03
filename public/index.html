@@ -1,30 +1,40 @@
 <!DOCTYPE html>
 <html lang="">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plane Crashers</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Plane Crashers</title>
+      <link rel="stylesheet" type="text/css" href="style.css">
 
-  <div style="float: right;">
-      <div id="chat-text" style="width: 500px;height:350px;overflow-y:scroll;border:1px solid black;margin-bottom:4px;">
-          <div>
-            <strong> Welcome to Plane Crashers!</strong>
+      <div id="sign">
+        <!--add the logo above and make it prettier-->
+        Username: <input id="sign-username" type="text"></input><br>
+        Password: <input id="sign-password" type="text"></input><br>
+        <button id="sign-signin">Sign in</button>
+        <button id="sign-signup">Sign up</button>
+      </div>
+      <div id="game">
+        <div id="container" >
+          <div id="chat-text">
+              <div>
+                <strong> Welcome to Plane Crashers!</strong>
+              </div>
           </div>
-      </div>
-      <div id="form">
-          <form id="chat-form">
-            <!-- reduce size of input space to 400 and add a button -->
-            <input id="chat-input" type="text" style="width: 500px;margin-bottom:4px;"></input>
-          </form>
-      </div>
-      <div id="connected-players" style="width: 500px;height:250px  ;overflow-y:scroll;border:1px solid black;"></div>
-  </div>
+          <div id="form">
+              <form id="chat-form">
+                <!-- reduce size of input space to 400 and add a button -->
+                <input id="chat-input" type="text"></input>
+              </form>
+          </div>
+          <div id="connected-players"></div>
+        </div>
 
-  <div>
-    <canvas id="ctx" width="820" height="640"></canvas>
-  </div>
+      <div>
+        <canvas id="ctx" width="820" height="640"></canvas>
+      </div>
+    </div>
 
-  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-  <script src="client.js"></script>
-  </head>
+      <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+      <script src="client.js"></script>
+    </head>
   </html>

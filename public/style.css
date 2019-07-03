@@ -1,0 +1,29 @@
+#container{
+  float: right;
+}
+#game{
+  display: none;
+}
+#ctx{
+  border: 1px solid black;
+}
+
+#chat-text{
+  width: 500px;
+  height:350px;
+  overflow-y:scroll;
+  border:1px solid black;
+  margin-bottom:4px;
+}
+
+#chat-input{
+  width: 500px;
+  margin-bottom:4px;
+}
+
+#connected-players{
+  width: 500px;
+  height:258px;
+  overflow-y:scroll;
+  border:1px solid black;
+}

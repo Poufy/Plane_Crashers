@@ -2,35 +2,70 @@ var chatText = document.getElementById('chat-text');
 var chatInput = document.getElementById('chat-input');
 var chatForm = document.getElementById('chat-form');
 var connectedPlayers = document.getElementById('connected-players');
-
 var ctx = document.getElementById("ctx").getContext("2d");
 ctx.font = '30px Arial';
 var socket = io();
-//setting default values so game does not bug out by sending null mouseX and mouseY values when cursor is initially off the canvas.
+/*setting default values so game does not bug out by sending null mouseX and
+ mouseY values when cursor is initially off the canvas.*/
 var mouseX = 0;
 var mouseY = 0;
 //time stamps for the chat
 var today = new Date();
-var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ' ';
-var userName = prompt('Please enter your username.');
+var time = today.getHours() + ":" + today.getMinutes() + ":" +
+ today.getSeconds() + ' ';
+//var userName; //= prompt('Please enter your username.');
 
-socket.emit('userName', userName);
+
+
+
+
+/*Handling the login*/
+var sign = document.getElementById('sign');
+var username = document.getElementById('sign-username');
+var password = document.getElementById('sign-password');
+var signin = document.getElementById('sign-signin');
+var signup = document.getElementById('sign-signup');
+var allowEventEmition = false; //mouse and key tracking are being emiting on the
+//sign in screen so this prevents it and only works after loging in.
+
+/*Here we send the username and the password entered by the client to the server
+ to be validated there and then we recieve wether the validation was successful
+ or not*/
+signin.onclick = function(){
+  socket.emit('signIn', {username: username.value,password: password.value});
+  console.log('emited');
+}
+
+socket.on('signInValidation', function(data){
+  console.log(data);
+    if(data){
+      sign.style.display = 'none';
+      game.style.display = 'inline';
+      allowEventEmition = true;
+    }
+    else{
+        console.log('Wrong user information.')
+    }
+});
+
 /*Handling the chat*/
 chatForm.onsubmit = function(event){
   event.preventDefault(); //prevent the browser from refreshing.
-  socket.emit('messageToServer' , time + ' ' + userName + ' : '+ chatInput.value);
+  socket.emit('messageToServer' , chatInput.value);
   chatInput.value = '';
 }
 
 socket.on('messageToClients', function(data){
-  chatText.innerHTML += '<div>' + data + '</div>';
+  chatText.innerHTML += '<div>' + time + ' ' + userName + ' : '+
+    data.fontcolor("green") + '</div>';
 });
 
 //appending player userName
 socket.on('newPlayer', function(data){
   connectedPlayers.innerHTML = 'Connected Players';
   for(var id in data){
-    connectedPlayers.innerHTML += '<div>id: ' + data[id].userName + '</div>'
+    connectedPlayers.innerHTML += '<div>id: ' +
+     data[id].userName.fontcolor("green") + '</div>'
   }
       });
 
@@ -48,7 +83,8 @@ socket.on('newPosition', function(data){
   //clearing the screen
   ctx.fillStyle = "#ffffff"
   ctx.fillRect(0,0,820,640);
-  socket.emit('mouseCoordinates', {mouseX: mouseX, mouseY: mouseY});
+  if(allowEventEmition)
+    socket.emit('mouseCoordinates', {mouseX: mouseX, mouseY: mouseY});
   for(var i in data.ships){
      var ship = data.ships[i];
      //drawing the ships
@@ -56,7 +92,7 @@ socket.on('newPosition', function(data){
      ctx.translate(ship.x, ship.y);
      ctx.rotate(ship.angle);
      ctx.fillStyle = "#00FF00"
-     ctx.fillRect(10, 10,30,30);
+     ctx.fillRect(0,0,30,30);
      ctx.restore();
 
      ctx.save();
@@ -71,7 +107,7 @@ socket.on('newPosition', function(data){
        ctx.translate(ship.bullets[k].x,ship.bullets[k].y);
        ctx.rotate(ship.bullets[k].angle);
        ctx.fillStyle = "#1ABC9C"
-       ctx.fillRect(10, 10,10,10);
+       ctx.fillRect(0, 0,10,10);
        ctx.restore();
 
      }
@@ -82,14 +118,17 @@ socket.on('newPosition', function(data){
 /*Handling the key presses*/
 
 document.onkeydown = function(event){
-  if(event.keyCode === 87)
+  if(event.keyCode === 87 && allowEventEmition)
     socket.emit('thrust', true);
+  else if(event.keyCode === 13)
+    socket.emit('signIn', {username: username.value,password: password.value});
 }
 
 document.onmousedown = function(event){
-  socket.emit('fire');
+  if(allowEventEmition)
+    socket.emit('fire');
 }
 document.onkeyup = function(event){
-  if(event.keyCode === 87)
+  if(event.keyCode === 87 && allowEventEmition)
     socket.emit('thrust', false);
 }
