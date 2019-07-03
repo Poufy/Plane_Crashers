@@ -28,12 +28,19 @@ var signup = document.getElementById('sign-signup');
 var allowEventEmition = false; //mouse and key tracking are being emiting on the
 //sign in screen so this prevents it and only works after loging in.
 
+
+//Handling the signin
 /*Here we send the username and the password entered by the client to the server
  to be validated there and then we recieve wether the validation was successful
  or not*/
 signin.onclick = function(){
   socket.emit('signIn', {username: username.value,password: password.value});
-  console.log('emited');
+}
+
+signup.onclick = function(){
+  socket.emit('signUp', {username: username.value, password: password.value});
+  username.value = '';
+  password.value = '';
 }
 
 socket.on('signInValidation', function(data){

@@ -70,18 +70,20 @@ var Ship = function(x,y,angle){
 }
 
 
-var validUsers = {
-  'noor': 'noor',
-  'walid': 'walid',
-  'abd': 'abd'
-}
+var validUsers = {}
 
+var isValidSignIn = function(username, password){
+  return validUsers[username] == password;
+}
 
 io.sockets.on('connection', function(socket){
       console.log('connected');
+      socket.on('signUp', function(data){
+        validUsers[data.username] = data.password;
+      });
       //after recieving the userName from the client
       socket.on('signIn', function(data){
-        if(data.username === 'noor' && data.password === 'noor'){
+        if(isValidSignIn(data.username,data.password)){
           gameState.ships[socket.id] = new Ship(300,300, 0);
           gameState.ships[socket.id].userName = data.username;
 
