@@ -50,6 +50,8 @@ var Ship = function(x,y,angle){
   self.maxVelocity =  8;
   self.userName = 'unknown';
   self.bullets = {};
+  self.toRespawn = false;
+  self.hitPoints = 100;
   self.update = function(){
     if(self.isThrusting){
       self.velocity += 1;
@@ -65,12 +67,21 @@ var Ship = function(x,y,angle){
             self.y -= self.velocity * Math.cos(self.angle);
           }
         }
+    if(self.toRespawn){
+      self.x = 100;
+      self.y = 100;
+      self.hitPoints = 100;
+      self.toRespawn = false;
+    }
+
   }
+
   return self;
 }
 
 
-var validUsers = {}
+var validUsers = {'1': '1',
+'2': '2'}
 
 var isValidSignIn = function(username, password){
   return validUsers[username] == password;
@@ -134,22 +145,31 @@ setInterval(function(){
       bullet.checkBounds();
       //checking collision for each bullet with each ship
       for(var k in gameState.ships){
+        var anotherShip = gameState.ships[k];
         //checking for collision with other ships but execluding the one that is shooting the bullet which has the socketid k
-        if(checkCollision(gameState.ships[k], bullet) && bullet.parentUniqueId != k){
+        if(checkCollision(anotherShip, bullet) && bullet.parentUniqueId != k){
           //we might want to reduce hp of the ship that was hit which has the id k
             bullet.toRemove = true;
+            if((anotherShip.hitPoints -=10) == 0)
+              anotherShip.toRespawn = true;
+            }
         }
+        //removing bullets when toRemove is true
+        if(ship.bullets[j].toRemove){
+            delete ship.bullets[j];
+            continue;
+          }
+        //moving the bullet
+        ship.bullets[j].update();
       }
-      //removing bullets when toRemove is true
-      if(ship.bullets[j].toRemove){
-          delete ship.bullets[j];
-          continue;
-        }
-      //moving the bullet
-      ship.bullets[j].update();
+
+      //this is bugging out.
+      // if(ship.hitPoints < 0){
+      //     respawn(ship);
+      // }
 
     }
-}
+
 
   io.sockets.emit('newPosition', gameState);
 }, 1000/60);
@@ -161,5 +181,12 @@ function getDistance(first, second)  {
 
 function checkCollision(first,second){
   return getDistance(first,second) < 25;
+}
+
+function respawn(ship){
+
+    ship.x = Math.random * 400;
+    ship.y = Math.random * 400;
+    ship.hitPoints = 100;
 
 }
