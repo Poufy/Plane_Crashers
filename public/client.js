@@ -51,8 +51,17 @@ socket.on('signInValidation', function(data){
       allowEventEmition = true;
     }
     else{
-        console.log('Wrong user information.')
+        alert('Wrong user information.');
     }
+});
+
+socket.on('signUpValidation', function(data){
+  console.log(data);
+    if(data)
+      alert('SignUp successful!');
+    else
+      alert('Username is already taken!')
+
 });
 
 /*Handling the chat*/

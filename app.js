@@ -1,3 +1,7 @@
+var mongojs = require('mongojs');
+var db = mongojs('localhost:27017/planeCrashers','account');
+ //lsof -i | grep mongo to get the port num
+ db.account.insert({username: "la", password:"la"});
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
@@ -83,26 +87,59 @@ var Ship = function(x,y,angle){
 var validUsers = {'1': '1',
 '2': '2'}
 
-var isValidSignIn = function(username, password){
-  return validUsers[username] == password;
+var isValidSignIn = function(data, callback){
+  callback(validUsers[data.username] == data.password);
 }
+
+var isUsernameUsed = function(username, callback){
+  var used = false;
+  for(var key in validUsers){
+    if(username === key)
+      used = true;
+  }
+
+  callback(used);
+}
+
+var addUser = function(data, callback){
+  validUsers[data.username] = data.password;
+  callback();
+}
+
+/*the reason we're using callback functions is that fetching from the database
+might take some time and therefore our functions would be returning values too
+early before the function fetches the data. Now the function only works when
+the data is ready for use. This is just like the io.sockets.on function. it
+waits for a socket to connect then do the commands.*/
 
 io.sockets.on('connection', function(socket){
       console.log('connected');
       socket.on('signUp', function(data){
-        validUsers[data.username] = data.password;
+        isUsernameUsed(data, function(used){
+          if(!used){
+            /*so we add the user with the data AND ONLY AFTER THAT IS DONE we
+            emit to the client*/
+            addUser(data, function(){
+              io.sockets.emit('signUpValidation', true);
+            });
+          }
+          else
+            io.sockets.emit('signUpValidation', false);
+        });
       });
       //after recieving the userName from the client
       socket.on('signIn', function(data){
-        if(isValidSignIn(data.username,data.password)){
-          gameState.ships[socket.id] = new Ship(300,300, 0);
-          gameState.ships[socket.id].userName = data.username;
+        isValidSignIn(data, function(valid){
+          if(valid){
+            gameState.ships[socket.id] = new Ship(300,300, 0);
+            gameState.ships[socket.id].userName = data.username;
 
-          io.sockets.emit('newPlayer', gameState.ships);
-          io.sockets.emit('signInValidation', true);
-        }else{
-          io.sockets.emit('signInValidation', false);
-        }
+            io.sockets.emit('newPlayer', gameState.ships);
+            io.sockets.emit('signInValidation', true);
+          }else{
+            io.sockets.emit('signInValidation', false);
+          }
+        });
       });
 
       socket.on('fire', function(){
@@ -162,11 +199,6 @@ setInterval(function(){
         //moving the bullet
         ship.bullets[j].update();
       }
-
-      //this is bugging out.
-      // if(ship.hitPoints < 0){
-      //     respawn(ship);
-      // }
 
     }
 
