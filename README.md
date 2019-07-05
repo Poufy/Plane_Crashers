@@ -15,12 +15,16 @@ node app.js
 then open the browser of your choice and navigate to localhost:3000
 
 # TODO
-Bullets collision
+Bullets collision(done)
 
-add user names to ship object
+Add user names to ship object(done)
 
-add time stamps to chat and connected time to connected players
+Add time stamps to chat and connected time to connected players(done)
 
-replace connected players with an image and also add a logo
+Replace connected players with an image and also add a logo
+
+Put Entity/Ship/Bullet in seperate files
+
+Add score/levels on database and on screen for each ship
 
 
