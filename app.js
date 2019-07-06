@@ -128,10 +128,10 @@ io.sockets.on('connection', function(socket) {
                 /*so we add the user with the data AND ONLY AFTER THAT IS DONE we
                 emit to the client*/
                 addUser(data, function() {
-                    io.sockets.emit('signUpValidation', true);
+                    socket.emit('signUpValidation', true);
                 });
             } else
-                io.sockets.emit('signUpValidation', false);
+                socket.emit('signUpValidation', false);
         });
     });
     //after recieving the userName from the client
@@ -139,12 +139,11 @@ io.sockets.on('connection', function(socket) {
         isValidSignIn(data, function(valid) {
             if (valid) {
                 gameState.ships[socket.id] = new Ship(300, 300, 0);
-                console.log(gameState.ships[socket.id]);
                 gameState.ships[socket.id].userName = data.username;
                 io.sockets.emit('newPlayer', gameState.ships);
-                io.sockets.emit('signInValidation', true);
+                socket.emit('signInValidation', true);
             } else {
-                io.sockets.emit('signInValidation', false);
+              socket.emit('signInValidation', false);
             }
         });
     });
@@ -159,7 +158,6 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('messageToServer', function(data) {
-        console.log('in server: ' + data);
         io.sockets.emit('messageToClients', data);
     });
 

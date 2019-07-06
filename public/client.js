@@ -72,14 +72,14 @@ socket.on('signUpValidation', function(data) {
 chatForm.onsubmit = function(event) {
     event.preventDefault(); //prevent the browser from refreshing.
     console.log(chatInput.value);
-    socket.emit('messageToServer', chatInput.value);
+    socket.emit('messageToServer', {message: chatInput.value, username: username.value});
     chatInput.value = '';
 }
 
 socket.on('messageToClients', function(data) {
     console.log(data);
-    chatText.innerHTML += '<div>' + time + ' ' + username.value + ' : ' +
-        data.fontcolor("green") + '</div>';
+    chatText.innerHTML += '<div>' + time + ' ' + data.username + ' : ' +
+        data.message.fontcolor("green") + '</div>';
 });
 
 //appending player username to connected users window
