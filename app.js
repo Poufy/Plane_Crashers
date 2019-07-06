@@ -1,5 +1,6 @@
 var mongojs = require('mongojs');
 var db = mongojs('localhost:27017/planeCrashers', ['account']);
+var SHA256 = require('crypto-js/sha256');
 //lsof -i | grep mongo to get the port num
 var express = require('express');
 var app = express();
@@ -42,6 +43,7 @@ function Bullet (x, y, angle, parentUniqueId) {
     }
 }
 
+
 function Ship(x, y, angle) {
   Entity.call(this,x,y,angle);
     this.velocity = 2;
@@ -82,7 +84,7 @@ function Ship(x, y, angle) {
 var isValidSignIn = function(data, callback) {
     db.account.find({
         username: data.username,
-        password: data.password
+        password: SHA256(data.password).toString()
     }, function(err, res) {
         if (res.length > 0)
             callback(true);
@@ -107,7 +109,7 @@ var isUsernameUsed = function(username, callback) {
 var addUser = function(data, callback) {
     db.account.insert({
         username: data.username,
-        password: data.password
+        password: SHA256(data.password).toString()
     });
     callback();
 }
