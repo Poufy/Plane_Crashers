@@ -3,7 +3,6 @@ var chatInput = document.getElementById('chat-input');
 var chatForm = document.getElementById('chat-form');
 var connectedPlayers = document.getElementById('connected-players');
 var ctx = document.getElementById("ctx").getContext("2d");
-ctx.font = '30px Arial';
 var socket = io();
 /*setting default values so game does not bug out by sending null mouseX and
  mouseY values when cursor is initially off the canvas.*/
@@ -20,10 +19,15 @@ var time = today.getHours() + ":" + today.getMinutes() + ":" +
 
 /*Handling the login*/
 var sign = document.getElementById('sign');
-var username = document.getElementById('sign-username');
-var password = document.getElementById('sign-password');
+var signInUsername = document.getElementById('sign-username');
+var signInPassword = document.getElementById('sign-password');
 var signin = document.getElementById('sign-signin');
 var signup = document.getElementById('sign-signup');
+
+var register = document.getElementById('register');
+var registerUsername = document.getElementById('register-username');
+var registerPassword = document.getElementById('register-password');
+var registerSignup = document.getElementById('register-signup');
 var allowEventEmition = false; //mouse and key tracking are being emiting on the
 //sign in screen so this prevents it and only works after loging in.
 
@@ -34,24 +38,30 @@ var allowEventEmition = false; //mouse and key tracking are being emiting on the
  or not*/
 signin.onclick = function() {
     socket.emit('signIn', {
-        username: username.value,
-        password: password.value
+        username: signInUsername.value,
+        password: signInPassword.value
     });
 }
 
 signup.onclick = function() {
-    socket.emit('signUp', {
-        username: username.value,
-        password: password.value
-    });
-    username.value = '';
-    password.value = '';
+    sign.style.display='none';
+    register.style.display = 'inline';
 }
 
+registerSignup.onclick = function() {
+  socket.emit('signUp', {
+      username: registerUsername.value,
+      password: registerPassword.value
+  });
+  register.style.display = 'none';
+  sign.style.display = 'inline';
+
+}
 socket.on('signInValidation', function(data) {
     console.log(data);
     if (data) {
         sign.style.display = 'none';
+        document.body.style.backgroundColor = "white";
         game.style.display = 'inline';
         allowEventEmition = true;
     } else {
@@ -72,7 +82,7 @@ socket.on('signUpValidation', function(data) {
 chatForm.onsubmit = function(event) {
     event.preventDefault(); //prevent the browser from refreshing.
     console.log(chatInput.value);
-    socket.emit('messageToServer', {message: chatInput.value, username: username.value});
+    socket.emit('messageToServer', {message: chatInput.value, username: signInUsername.value});
     chatInput.value = '';
 }
 
@@ -84,32 +94,43 @@ socket.on('messageToClients', function(data) {
 
 //appending player username to connected users window
 socket.on('newPlayer', function(data) {
-    connectedPlayers.innerHTML = 'Connected Players';
+    connectedPlayers.innerHTML = '<div>Connected Players</div>';
     for (var id in data) {
         connectedPlayers.innerHTML += '<div>id: ' +
             data[id].userName.fontcolor("green") + '</div>'
     }
 });
 
+/*Loading the images*/
+var Img = {};
+const backgroundImage = Img.background = new Image();
+backgroundImage.src = '/public/images/background.JPG';
+const planeImage = new Image();
+planeImage.src = '/public/images/smallPlane.png';
+const bulletImage = new Image();
+bulletImage.src = '/public/images/bullet.png';
 
 /*Drawing*/
 socket.on('newPosition', function(data) {
-    //clearing the screen
-    ctx.fillStyle = "#ffffff"
-    ctx.fillRect(0, 0, 820, 640);
-    if (allowEventEmition)
-        socket.emit('mouseCoordinates', {
-            mouseX: mouseX,
-            mouseY: mouseY
-        });
+  if (allowEventEmition)
+      socket.emit('mouseCoordinates', {
+          mouseX: mouseX,
+          mouseY: mouseY
+      });
+
+    drawBackground();
     for (var i in data.ships) {
         var ship = data.ships[i];
         //drawing the ships
-        ctx.save();
-        ctx.translate(ship.x, ship.y);
+        var healthBarWidth = 30 * ship.hitPoints / 100;
+        /*Closest attempt
+        ctx.translate(ship.x+planeImage.width/2, ship.y+planeImage.height/2);
         ctx.rotate(ship.angle);
-        ctx.fillStyle = "#00FF00"
-        ctx.fillRect(0, 0, 30, 30);
+        ctx.drawImage(planeImage, -planeImage.width/2, -planeImage.height/2);*/
+        ctx.save();
+        ctx.translate(ship.x+planeImage.width/2, ship.y+planeImage.height/2);
+        ctx.rotate(ship.angle);
+        ctx.drawImage(planeImage, -planeImage.width/2, -planeImage.height/2);
         ctx.restore();
 
         ctx.save();
@@ -118,17 +139,14 @@ socket.on('newPosition', function(data) {
         ctx.fillText(ship.userName + " %" + ship.hitPoints, 0, 0);
         ctx.restore();
 
-        //drawing the bullets
         for (var k in ship.bullets) {
             ctx.save();
-            ctx.translate(ship.bullets[k].x, ship.bullets[k].y);
+            ctx.translate(ship.bullets[k].x+planeImage.width/2, ship.bullets[k].y+planeImage.height/2);
             ctx.rotate(ship.bullets[k].angle);
-            ctx.fillStyle = "#1ABC9C"
-            ctx.fillRect(0, 0, 10, 10);
+            ctx.drawImage(bulletImage,-planeImage.width/2 + bulletImage.width/2+16, -planeImage.height/2-bulletImage.height/2);
             ctx.restore();
 
         }
-
     }
 
 });
@@ -153,4 +171,8 @@ document.onmousedown = function(event) {
 document.onkeyup = function(event) {
     if (event.keyCode === 87 && allowEventEmition)
         socket.emit('thrust', false);
+}
+
+function drawBackground(){
+    ctx.drawImage(backgroundImage,0,0);
 }

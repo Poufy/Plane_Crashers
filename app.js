@@ -16,7 +16,8 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-app.use(express.static('public'));
+app.use('/public',express.static(__dirname + '/public'));
+
 
 server.listen(3000, function() {
     console.log('listening on port: 3000');
@@ -26,7 +27,7 @@ function Entity(x,y,angle){
   this.x = x;
   this.y = y;
   this.angle = angle;
-  this.velocity = 6;
+  this.velocity = 9;
   this.update = function() {
     this.x += this.velocity * Math.sin(this.angle);
     this.y -= this.velocity * Math.cos(this.angle);
@@ -163,7 +164,9 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('mouseCoordinates', function(data) {
         var ship = gameState.ships[socket.id];
-        var angle = Math.atan2(data.mouseX - ship.x, -(data.mouseY - ship.y));
+        //this -80 needs to be removed. This is just a brute force solution to
+        //align the heading of the ship with the mouse.
+        var angle = Math.atan2(data.mouseX - ship.x- 80, -(data.mouseY - ship.y));
         ship.angle = angle;
     });
 

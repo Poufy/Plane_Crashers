@@ -1,0 +1,147 @@
+/*The background*/
+body {
+  margin: 0;
+  padding: 0;
+	width: 100wh;
+	height: 90vh;
+	color: #fff;
+	background: linear-gradient(-45deg, #576574, #4cd137, #273c75, #2f3640);
+	background-size: 400% 400%;
+	-webkit-animation: Gradient 15s ease infinite;
+	-moz-animation: Gradient 15s ease infinite;
+	animation: Gradient 15s ease infinite;
+}
+
+@-webkit-keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+}
+
+@-moz-keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+}
+
+@keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+}
+
+#container{
+  float: right;
+}
+#game{
+  display: none;
+}
+#ctx{
+  border: 1px solid black;
+  margin: 4px;
+  border-radius: 5px;
+}
+
+#chat-text{
+  width: 464px;
+  height:400px;
+  overflow-y:scroll;
+  border:1px solid black;
+  border-radius: 5px;
+  margin:4px;
+  background-color: gray;
+}
+#chat-text::-webkit-scrollbar{
+  width:0;
+  height: 0;
+}
+#chat-input{
+  width: 464px;
+  margin-bottom:4px;
+  border-radius: 5px;
+}
+
+#connected-players{
+  width: 464px;
+  height:120px;
+  overflow-y:scroll;
+  padding-left: 3px;
+  border:1px solid black;
+  border-radius: 5px;
+  background-color: gray;
+}
+
+#connected-players::-webkit-scrollbar{
+  width:0;
+  height: 0;
+}
+#register{
+  display: none;
+}
+#sign, #register{
+  width: 300px;
+  padding: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  background: #191919;
+  text-align: center;
+}
+#sign h1, #register h1{
+  color: white;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+#sign-username ,#sign-password,#register-username,#register-password{
+  border:0;
+  background: none;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid #3498db;
+  padding: 14px 10px;
+  width: 200px;
+  outline: none;
+  color: white;
+  border-radius: 24px;
+}
+
+#sign-username:focus,#sign-password:focus,#register-username:focus,#register-username:focus{
+  border-color: #2ecc71;
+}
+#sign-signin, #sign-signup,#register-signup{
+  border:0;
+  background: none;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid #2ecc71;
+  padding: 14px 40px;
+  color: white;
+  border-radius: 24px;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+#sign-signin:hover,#sign-signup:hover,#register-signup{
+  background: #2ecc71;
+}
