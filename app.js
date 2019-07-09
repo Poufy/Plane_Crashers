@@ -1,5 +1,5 @@
-var mongojs = require('mongojs');
-var db = mongojs('localhost:27017/planeCrashers', ['account']);
+
+
 var SHA256 = require('crypto-js/sha256');
 //lsof -i | grep mongo to get the port num
 var express = require('express');
@@ -21,6 +21,19 @@ app.use('/public',express.static(__dirname + '/public'));
 
 server.listen(3000, function() {
     console.log('listening on port: 3000');
+});
+
+/*MongoDB connection with cloud database*/
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+// Connection URL
+const url = 'Your Connection String';
+var db;
+// Use connect method to connect to the Server
+MongoClient.connect(url, function(err, client) {
+  assert.equal(null, err);
+  console.log('Connection Established');
+  db = client.db("planecrashers");
 });
 
 function Entity(x,y,angle){
@@ -79,24 +92,17 @@ function Ship(x, y, angle) {
     }
   }
 
-/*Handling the database with mongojs*/
 
-//Check if the list has matching username and password
-var isValidSignIn = function(data, callback) {
-    db.account.find({
+function addUser(data, callback) {
+    db.collection('account').insertOne({
         username: data.username,
         password: SHA256(data.password).toString()
-    }, function(err, res) {
-        if (res.length > 0)
-            callback(true);
-        else
-            callback(false);
     });
+    callback();
 }
 
-//check if the username already exists
-var isUsernameUsed = function(username, callback) {
-    db.account.find({
+function isUsernameUsed(username, callback) {
+    db.collection('account').find({
         username: username
     }, function(err, res) {
         if (res > 0)
@@ -106,13 +112,22 @@ var isUsernameUsed = function(username, callback) {
     });
 }
 
-//adds the user to the collection
-var addUser = function(data, callback) {
-    db.account.insert({
+function isValidSignIn(data, callback) {
+    db.collection('account').findOne({
         username: data.username,
         password: SHA256(data.password).toString()
-    });
-    callback();
+    }, function(err, user){
+      if(user)
+        callback(true);
+      else
+        callback(false);
+    })
+    // console.log(result);
+    // if(result.length > 0)
+    //   callback(true);
+    // else
+    //   callback(false);
+
 }
 
 /*the reason we're using callback functions is that fetching from the database
