@@ -1,3 +1,4 @@
+var Entity = require('./Entity.js');
 function Ship(x, y, angle) {
   Entity.call(this,x,y,angle);
     this.velocity = 2;
@@ -31,3 +32,5 @@ function Ship(x, y, angle) {
       }
     }
   }
+
+  module.exports = Ship;

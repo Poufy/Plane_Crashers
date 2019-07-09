@@ -1,5 +1,6 @@
-
-
+var Entity = require('./Game/Entity.js');
+var Ship = require('./Game/Ship.js');
+var Bullet = require('./Game/Bullet.js');
 var SHA256 = require('crypto-js/sha256');
 //lsof -i | grep mongo to get the port num
 var express = require('express');
@@ -10,13 +11,12 @@ var io = socketIO(server);
 var userName;
 var gameState = {
     ships: {},
-    //bullets: {}
 }
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-app.use('/public',express.static(__dirname + '/public'));
+app.use('/public', express.static(__dirname + '/public'));
 
 
 server.listen(3000, function() {
@@ -27,28 +27,17 @@ server.listen(3000, function() {
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 // Connection URL
-const url = 'Your Connection String';
+const url = 'mongodb+srv://Aldeen:shintariven4%23@planecrashers-aoplv.mongodb.net/test?retryWrites=true&w=majority';
 var db;
 // Use connect method to connect to the Server
 MongoClient.connect(url, function(err, client) {
-  assert.equal(null, err);
-  console.log('Connection Established');
-  db = client.db("planecrashers");
+    assert.equal(null, err);
+    console.log('Connection Established');
+    db = client.db("planecrashers");
 });
 
-function Entity(x,y,angle){
-  this.x = x;
-  this.y = y;
-  this.angle = angle;
-  this.velocity = 9;
-  this.update = function() {
-    this.x += this.velocity * Math.sin(this.angle);
-    this.y -= this.velocity * Math.cos(this.angle);
-  }
-}
-
-function Bullet (x, y, angle, parentUniqueId) {
-  Entity.call(this,x,y,angle);
+function Bullet(x, y, angle, parentUniqueId) {
+    Entity.call(this, x, y, angle);
     this.toRemove = false;
     this.parentUniqueId = parentUniqueId;
     this.checkBounds = function() {
@@ -56,41 +45,6 @@ function Bullet (x, y, angle, parentUniqueId) {
             this.toRemove = true;
     }
 }
-
-
-function Ship(x, y, angle) {
-  Entity.call(this,x,y,angle);
-    this.velocity = 2;
-    this.hitPoints = 100;
-    this.maxVelocity = 8;
-    this.userName = 'unknown';
-    this.bullets = {};
-    this.toRespawn = false;
-    this.isThrusting = false;
-    this.hitPoints = 100;
-    this.update = function(){
-      if (this.isThrusting) {
-          this.velocity += 1;
-          this.x += this.velocity * Math.sin(this.angle);
-          this.y -= this.velocity * Math.cos(this.angle);
-          if (this.velocity >= this.maxVelocity) {
-              this.velocity = this.maxVelocity;
-          }
-      } else {
-          if (this.velocity > 0) {
-              this.velocity -= 0.4;
-              this.x += this.velocity * Math.sin(this.angle);
-              this.y -= this.velocity * Math.cos(this.angle);
-          }
-      }
-      if (this.toRespawn) {
-          this.x = 100;
-          this.y = 100;
-          this.hitPoints = 100;
-          this.toRespawn = false;
-      }
-    }
-  }
 
 
 function addUser(data, callback) {
@@ -116,17 +70,12 @@ function isValidSignIn(data, callback) {
     db.collection('account').findOne({
         username: data.username,
         password: SHA256(data.password).toString()
-    }, function(err, user){
-      if(user)
-        callback(true);
-      else
-        callback(false);
+    }, function(err, user) {
+        if (user)
+            callback(true);
+        else
+            callback(false);
     })
-    // console.log(result);
-    // if(result.length > 0)
-    //   callback(true);
-    // else
-    //   callback(false);
 
 }
 
@@ -159,7 +108,7 @@ io.sockets.on('connection', function(socket) {
                 io.sockets.emit('newPlayer', gameState.ships);
                 socket.emit('signInValidation', true);
             } else {
-              socket.emit('signInValidation', false);
+                socket.emit('signInValidation', false);
             }
         });
     });
@@ -181,7 +130,7 @@ io.sockets.on('connection', function(socket) {
         var ship = gameState.ships[socket.id];
         //this -80 needs to be removed. This is just a brute force solution to
         //align the heading of the ship with the mouse.
-        var angle = Math.atan2(data.mouseX - ship.x- 80, -(data.mouseY - ship.y));
+        var angle = Math.atan2(data.mouseX - ship.x - 80, -(data.mouseY - ship.y));
         ship.angle = angle;
     });
 

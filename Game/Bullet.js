@@ -1,3 +1,4 @@
+var Entity = require('./Entity.js');
 function Bullet (x, y, angle, parentUniqueId) {
   Entity.call(this,x,y,angle);
     this.toRemove = false;
@@ -7,3 +8,5 @@ function Bullet (x, y, angle, parentUniqueId) {
             this.toRemove = true;
     }
 };
+
+module.exports = Bullet;
