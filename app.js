@@ -40,7 +40,8 @@ MongoClient.connect(url, function(err, client) {
 function addUser(data, callback) {
     db.collection('account').insertOne({
         username: data.username,
-        password: SHA256(data.password).toString()
+        password: SHA256(data.password).toString(),
+        score: 0
     });
     callback();
 }
@@ -66,7 +67,13 @@ function isValidSignIn(data, callback) {
         else
             callback(false);
     })
+}
 
+function getScore(username, callback){
+  db.collection('account').find({username: username},{score:1})
+  .toArray(function(err,result){ //list all the matching documents (which is one since names are unique)
+      callback(result[0].score);
+  });
 }
 
 /*the reason we're using callback functions is that fetching from the database
@@ -93,8 +100,10 @@ io.sockets.on('connection', function(socket) {
     socket.on('signIn', function(data) {
         isValidSignIn(data, function(valid) {
             if (valid) {
-                gameState.ships[socket.id] = new Ship(300, 300, 0);
-                gameState.ships[socket.id].userName = data.username;
+                gameState.ships[socket.id] = new Ship(Math.random()*300,Math.random()* 300, 0, data.username);
+                getScore(data.username, function(score){
+                    gameState.ships[socket.id].score = score;
+                });
                 io.sockets.emit('newPlayer', gameState.ships);
                 socket.emit('signInValidation', true);
             } else {
@@ -129,6 +138,9 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function() {
+        var ship = gameState.ships[socket.id];
+        console.log(ship.score);
+        db.collection('account').update({username: ship.userName},{$inc:{score:ship.score}});
         delete gameState.ships[socket.id];
         //emiting the list after someone disconnects for it to be updated.
         io.sockets.emit('newPlayer', gameState.ships);
@@ -154,7 +166,7 @@ setInterval(function() {
                 if (checkCollision(anotherShip, bullet) && bullet.parentUniqueId != k) {
                   //increasing the score of the ship that shot the bullet
                   var shipThatHit = gameState.ships[bullet.parentUniqueId];
-                  shipThatHit.score += 10;
+                  shipThatHit.score += 4;
                     bullet.toRemove = true;
                     if ((anotherShip.hitPoints -= 10) == 0)
                         anotherShip.toRespawn = true;

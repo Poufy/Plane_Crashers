@@ -1,11 +1,11 @@
 var Entity = require('./Entity.js');
-function Ship(x, y, angle) {
+function Ship(x, y, angle, username, score) {
   Entity.call(this,x,y,angle);
     this.velocity = 2;
     this.hitPoints = 100;
     this.maxVelocity = 8;
     this.score = 0;
-    this.userName = 'unknown';
+    this.userName = username;
     this.bullets = {};
     this.toRespawn = false;
     this.isThrusting = false;

@@ -29,7 +29,7 @@ Add score/levels on database and on screen for each ship(database done but still
 
 deal with edge cases like very long names.
 
-save score on the database on disconnect.
+save score on the database on disconnect.(done)
 
 
 

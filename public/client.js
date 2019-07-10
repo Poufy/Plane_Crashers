@@ -10,7 +10,6 @@ var socket = io();
 var mouseX = 0;
 var mouseY = 0;
 
-
 /*Handling the login*/
 var sign = document.getElementById('sign');
 var signInUsername = document.getElementById('sign-username');
@@ -140,7 +139,7 @@ socket.on('newPosition', function(data) {
         ctx.fillRect(0,0,75*ship.hitPoints/100,5);
         //drawing score
         ctx.fillText(ship.score, 0,-4);
-        ctx.fillText(ship.userName,20,-4);
+        ctx.fillText(ship.userName,30 ,-4);
         ctx.restore();
 
         for (var k in ship.bullets) {
