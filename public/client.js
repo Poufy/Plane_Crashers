@@ -3,18 +3,12 @@ var chatInput = document.getElementById('chat-input');
 var chatForm = document.getElementById('chat-form');
 var connectedPlayers = document.getElementById('connected-players');
 var ctx = document.getElementById("ctx").getContext("2d");
+ctx.font = "bold 10pt Courier";
 var socket = io();
 /*setting default values so game does not bug out by sending null mouseX and
  mouseY values when cursor is initially off the canvas.*/
 var mouseX = 0;
 var mouseY = 0;
-//time stamps for the chat
-var today = new Date();
-var time = today.getHours() + ":" + today.getMinutes() + ":" +
-    today.getSeconds() + ' ';
-//var userName; //= prompt('Please enter your username.');
-
-
 
 
 /*Handling the login*/
@@ -60,7 +54,7 @@ registerSignup.onclick = function() {
 socket.on('signInValidation', function(data) {
     console.log(data);
     if (data) {
-        sign.style.display = 'none';
+        signincontainer.style.display = 'none';
         document.body.style.backgroundColor = "white";
         game.style.display = 'inline';
         allowEventEmition = true;
@@ -87,17 +81,21 @@ chatForm.onsubmit = function(event) {
 }
 
 socket.on('messageToClients', function(data) {
-    console.log(data);
+  //time stamps for the chat
+  var today = new Date();
+  var time = today.getHours() + ":" + today.getMinutes() + ":" +
+      today.getSeconds() + ' ';
+
     chatText.innerHTML += '<div>' + time + ' ' + data.username + ' : ' +
-        data.message.fontcolor("green") + '</div>';
+        data.message.fontcolor("#32ff7e") + '</div>';
 });
 
 //appending player username to connected users window
 socket.on('newPlayer', function(data) {
     connectedPlayers.innerHTML = '<div>Connected Players</div>';
     for (var id in data) {
-        connectedPlayers.innerHTML += '<div>id: ' +
-            data[id].userName.fontcolor("green") + '</div>'
+        connectedPlayers.innerHTML += '<div>Username: ' +
+            data[id].userName.fontcolor("#32ff7e") + '</div>'
     }
 });
 
@@ -111,13 +109,13 @@ const bulletImage = new Image();
 bulletImage.src = '/public/images/bullet.png';
 
 /*Drawing*/
+
 socket.on('newPosition', function(data) {
   if (allowEventEmition)
       socket.emit('mouseCoordinates', {
           mouseX: mouseX,
           mouseY: mouseY
       });
-
     drawBackground();
     for (var i in data.ships) {
         var ship = data.ships[i];
@@ -134,9 +132,15 @@ socket.on('newPosition', function(data) {
         ctx.restore();
 
         ctx.save();
-        ctx.fillStyle = "#00FF00";
-        ctx.translate(ship.x, ship.y);
-        ctx.fillText(ship.userName + " %" + ship.hitPoints, 0, 0);
+        ctx.translate(ship.x+40, ship.y);
+        //drawing healthbars
+        ctx.fillStyle = "red";
+        ctx.fillRect(0,0,75,5);
+        ctx.fillStyle = "green";
+        ctx.fillRect(0,0,75*ship.hitPoints/100,5);
+        //drawing score
+        ctx.fillText(ship.score, 0,-4);
+        ctx.fillText(ship.userName,20,-4);
         ctx.restore();
 
         for (var k in ship.bullets) {
@@ -150,6 +154,16 @@ socket.on('newPosition', function(data) {
     }
 
 });
+function drawHealthBars(context){
+  var healthBarWidth = 30 * ship.hitPoints / 100;
+  ctx.save();
+  ctx.translate(ship.x+40, ship.y);
+  ctx.fillStyle = "red";
+  ctx.fillRect(0,0,75,5);
+  ctx.fillStyle = "green";
+  ctx.fillRect(0,0,75*ship.hitPoints/100,5);
+  ctx.restore();
+}
 
 //emiting the mouse Coordinates to the server to calculate the angle there.
 document.addEventListener("mousemove", function(event) {

@@ -21,10 +21,16 @@ Add user names to ship object(done)
 
 Add time stamps to chat and connected time to connected players(done)
 
-Replace connected players with an image and also add a logo
+Replace connected players with an image and also add a logo(done)
 
-Put Entity/Ship/Bullet in seperate files
+Put Entity/Ship/Bullet in seperate files(done)
 
-Add score/levels on database and on screen for each ship
+Add score/levels on database and on screen for each ship(database done but still need score)
+
+deal with edge cases like very long names.
+
+save score on the database on disconnect.
+
+
 
 

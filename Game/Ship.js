@@ -4,6 +4,7 @@ function Ship(x, y, angle) {
     this.velocity = 2;
     this.hitPoints = 100;
     this.maxVelocity = 8;
+    this.score = 0;
     this.userName = 'unknown';
     this.bullets = {};
     this.toRespawn = false;

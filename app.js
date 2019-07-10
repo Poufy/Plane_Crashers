@@ -8,7 +8,6 @@ var app = express();
 var server = require('http').Server(app);
 var socketIO = require('socket.io');
 var io = socketIO(server);
-var userName;
 var gameState = {
     ships: {},
 }
@@ -36,15 +35,6 @@ MongoClient.connect(url, function(err, client) {
     db = client.db("planecrashers");
 });
 
-function Bullet(x, y, angle, parentUniqueId) {
-    Entity.call(this, x, y, angle);
-    this.toRemove = false;
-    this.parentUniqueId = parentUniqueId;
-    this.checkBounds = function() {
-        if (this.x > 850 || this.y > 670 || this.x < -40 || this.y < -40)
-            this.toRemove = true;
-    }
-}
 
 
 function addUser(data, callback) {
@@ -116,6 +106,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('fire', function() {
         var ship = gameState.ships[socket.id];
         ship.bullets[Math.random()] = new Bullet(ship.x, ship.y, ship.angle, socket.id);
+        socket.emit('updateScore',ship.score);
     });
 
     socket.on('thrust', function(data) {
@@ -130,8 +121,11 @@ io.sockets.on('connection', function(socket) {
         var ship = gameState.ships[socket.id];
         //this -80 needs to be removed. This is just a brute force solution to
         //align the heading of the ship with the mouse.
-        var angle = Math.atan2(data.mouseX - ship.x - 80, -(data.mouseY - ship.y));
-        ship.angle = angle;
+        if(typeof(ship) != 'undefined'){
+          var angle = Math.atan2(data.mouseX - ship.x - 80, -(data.mouseY - ship.y));
+          ship.angle = angle;
+        }
+
     });
 
     socket.on('disconnect', function() {
@@ -158,7 +152,9 @@ setInterval(function() {
                 var anotherShip = gameState.ships[k];
                 //checking for collision with other ships but execluding the one that is shooting the bullet which has the socketid k
                 if (checkCollision(anotherShip, bullet) && bullet.parentUniqueId != k) {
-                    //we might want to reduce hp of the ship that was hit which has the id k
+                  //increasing the score of the ship that shot the bullet
+                  var shipThatHit = gameState.ships[bullet.parentUniqueId];
+                  shipThatHit.score += 10;
                     bullet.toRemove = true;
                     if ((anotherShip.hitPoints -= 10) == 0)
                         anotherShip.toRespawn = true;
