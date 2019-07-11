@@ -103,9 +103,9 @@ io.sockets.on('connection', function(socket) {
                 gameState.ships[socket.id] = new Ship(Math.random()*300,Math.random()* 300, 0, data.username);
                 getScore(data.username, function(score){
                     gameState.ships[socket.id].score = score;
+                    io.sockets.emit('newPlayer', gameState.ships);
+                    socket.emit('signInValidation', true);
                 });
-                io.sockets.emit('newPlayer', gameState.ships);
-                socket.emit('signInValidation', true);
             } else {
                 socket.emit('signInValidation', false);
             }
@@ -115,6 +115,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('fire', function() {
         var ship = gameState.ships[socket.id];
         ship.bullets[Math.random()] = new Bullet(ship.x, ship.y, ship.angle, socket.id);
+        socket.emit('playSound');
         socket.emit('updateScore',ship.score);
     });
 
@@ -139,7 +140,6 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('disconnect', function() {
         var ship = gameState.ships[socket.id];
-        console.log(ship.score);
         db.collection('account').update({username: ship.userName},{$inc:{score:ship.score}});
         delete gameState.ships[socket.id];
         //emiting the list after someone disconnects for it to be updated.

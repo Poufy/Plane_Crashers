@@ -24,12 +24,13 @@ var registerSignup = document.getElementById('register-signup');
 var allowEventEmition = false; //mouse and key tracking are being emiting on the
 //sign in screen so this prevents it and only works after loging in.
 
-
+playSound('soundtrack');
 //Handling the signin
 /*Here we send the username and the password entered by the client to the server
  to be validated there and then we recieve wether the validation was successful
  or not*/
 signin.onclick = function() {
+    playSound('button');
     socket.emit('signIn', {
         username: signInUsername.value,
         password: signInPassword.value
@@ -37,11 +38,13 @@ signin.onclick = function() {
 }
 
 signup.onclick = function() {
+    playSound('button');
     sign.style.display='none';
     register.style.display = 'inline';
 }
 
 registerSignup.onclick = function() {
+  playSound('button');
   socket.emit('signUp', {
       username: registerUsername.value,
       password: registerPassword.value
@@ -51,7 +54,6 @@ registerSignup.onclick = function() {
 
 }
 socket.on('signInValidation', function(data) {
-    console.log(data);
     if (data) {
         signincontainer.style.display = 'none';
         document.body.style.backgroundColor = "white";
@@ -63,7 +65,6 @@ socket.on('signInValidation', function(data) {
 });
 
 socket.on('signUpValidation', function(data) {
-    console.log(data);
     if (data)
         alert('SignUp successful!');
     else
@@ -74,7 +75,6 @@ socket.on('signUpValidation', function(data) {
 /*Handling the chat*/
 chatForm.onsubmit = function(event) {
     event.preventDefault(); //prevent the browser from refreshing.
-    console.log(chatInput.value);
     socket.emit('messageToServer', {message: chatInput.value, username: signInUsername.value});
     chatInput.value = '';
 }
@@ -146,13 +146,17 @@ socket.on('newPosition', function(data) {
             ctx.save();
             ctx.translate(ship.bullets[k].x+planeImage.width/2, ship.bullets[k].y+planeImage.height/2);
             ctx.rotate(ship.bullets[k].angle);
-            ctx.drawImage(bulletImage,-planeImage.width/2 + bulletImage.width/2+16, -planeImage.height/2-bulletImage.height/2);
+            ctx.drawImage(bulletImage,-planeImage.width/2 + bulletImage.width/2+21, -planeImage.height/2-bulletImage.height/2);
             ctx.restore();
 
         }
     }
-
 });
+
+socket.on('playSound', function(){
+  playSound('gun');
+});
+
 function drawHealthBars(context){
   var healthBarWidth = 30 * ship.hitPoints / 100;
   ctx.save();
@@ -188,4 +192,20 @@ document.onkeyup = function(event) {
 
 function drawBackground(){
     ctx.drawImage(backgroundImage,0,0);
+}
+
+function playSound(which){
+  if(which === 'gun'){
+    var gunSound = new Audio('/public/sounds/gunfire.mp3');
+    gunSound.volume = 0.4;
+    gunSound.play();
+  }else if(which === 'button'){
+    var buttonSound = new Audio('/public/sounds/button.mp3');
+    buttonSound.play();
+  }else if(which === 'soundtrack'){
+    var soundTrack = new Audio('/public/sounds/soundtrack.mp3');
+    soundTrack.loop = true;
+    soundTrack.volume = 0.4;
+    soundTrack.play();
+  }
 }

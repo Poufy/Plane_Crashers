@@ -1,5 +1,5 @@
 var Entity = require('./Entity.js');
-function Ship(x, y, angle, username, score) {
+function Ship(x, y, angle, username) {
   Entity.call(this,x,y,angle);
     this.velocity = 2;
     this.hitPoints = 100;

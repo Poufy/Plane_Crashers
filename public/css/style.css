@@ -67,7 +67,8 @@ body {
   border:1px solid black;
   border-radius: 5px;
   margin:4px;
-  background-color: gray;
+  background-image: url('/public/images/background.JPG');
+  background-position:center;
   font-family: Arial;
   font-size: 18px;
 }
@@ -88,7 +89,8 @@ body {
   padding-left: 3px;
   border:1px solid black;
   border-radius: 5px;
-  background-color: gray;
+  background-image: url('/public/images/background.JPG');
+  background-position:center;
 }
 
 #connected-players::-webkit-scrollbar{
@@ -102,11 +104,12 @@ body {
   width: 300px;
   padding: 40px;
   position: absolute;
+  background-image: url('/public/images/background.JPG');
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  background: #191919;
   text-align: center;
+  border-radius: 6px;
 }
 #sign h1, #register h1{
   color: white;
