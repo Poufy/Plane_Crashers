@@ -31,6 +31,12 @@ deal with edge cases like very long names.
 
 save score on the database on disconnect.(done)
 
+Add a checkbox on signin to mute the sound track.
+
+Add a list of features and controls left to the signin menu.
+
+Add new attacks like shotgun or missiles in the future.
+
 
 
 
