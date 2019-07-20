@@ -48,16 +48,17 @@ function addUser(data, callback) {
     callback();
 }
 
-function isUsernameUsed(username, callback) {
-    db.collection('account').find({
-        username: username
+function isUsernameUsed(data, callback) {
+    db.collection('account').findOne({
+        username: data.username
     }, function(err, res) {
-        if (res > 0)
+        if (res != null)
             callback(true);
         else
             callback(false);
     });
 }
+
 
 function isValidSignIn(data, callback) {
     db.collection('account').findOne({
@@ -143,7 +144,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('disconnect', function() {
         var ship = gameState.ships[socket.id];
         if(checkValidity(ship)){
-        db.collection('account').update({username: ship.userName},{$inc:{score:ship.score}});
+        db.collection('account').update({username: ship.userName},{score:ship.score});
         delete gameState.ships[socket.id];
         //emiting the list after someone disconnects for it to be updated.
         io.sockets.emit('newPlayer', gameState.ships);

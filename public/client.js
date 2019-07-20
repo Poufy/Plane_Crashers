@@ -3,6 +3,7 @@ var chatInput = document.getElementById('chat-input');
 var chatForm = document.getElementById('chat-form');
 var connectedPlayers = document.getElementById('connected-players');
 var ctx = document.getElementById("ctx").getContext("2d");
+var soundTrack = new Audio('/public/sounds/soundtrack.mp3');
 ctx.font = "bold 10pt Courier";
 var socket = io();
 /*setting default values so game does not bug out by sending null mouseX and
@@ -75,6 +76,9 @@ socket.on('signUpValidation', function(data) {
 /*Handling the chat*/
 chatForm.onsubmit = function(event) {
     event.preventDefault(); //prevent the browser from refreshing.
+    if(chatInput.value == '!soundtrack'){
+      toggleSoundTrack();
+    }
     socket.emit('messageToServer', {message: chatInput.value, username: signInUsername.value});
     chatInput.value = '';
 }
@@ -191,18 +195,24 @@ function drawBackground(){
     ctx.drawImage(backgroundImage,0,0);
 }
 
-function playSound(which){
-  if(which === 'gun'){
+function playSound(sound){
+  if(sound === 'gun'){
     var gunSound = new Audio('/public/sounds/gunfire.mp3');
     gunSound.volume = 0.4;
     gunSound.play();
-  }else if(which === 'button'){
+  }else if(sound === 'button'){
     var buttonSound = new Audio('/public/sounds/button.mp3');
     buttonSound.play();
-  }else if(which === 'soundtrack'){
-    var soundTrack = new Audio('/public/sounds/soundtrack.mp3');
+  }else if(sound === 'soundtrack'){
     soundTrack.loop = true;
     soundTrack.volume = 0.4;
     soundTrack.play();
   }
+}
+
+function toggleSoundTrack(){
+  if(soundTrack.paused)
+    soundTrack.play();
+  else
+    soundTrack.pause();
 }
