@@ -120,14 +120,8 @@ socket.on('newPosition', function(data) {
         var ship = data.ships[i];
         //drawing the ships
         var healthBarWidth = 30 * ship.hitPoints / 100;
-        /*Closest attempt
-        ctx.translate(ship.x+planeImage.width/2, ship.y+planeImage.height/2);
-        ctx.rotate(ship.angle);
-        ctx.drawImage(planeImage, -planeImage.width/2, -planeImage.height/2);*/
+
         ctx.save();
-        // ctx.translate(ship.x+planeImage.width/2, ship.y+planeImage.height/2);
-        // ctx.rotate(ship.angle);
-        // ctx.drawImage(planeImage, -planeImage.width/2, -planeImage.height/2);
         ctx.translate(ship.x + planeImage.width/2, ship.y + planeImage.height/2);
         ctx.rotate(ship.angle);
         ctx.drawImage(planeImage, -planeImage.width / 2, -planeImage.height / 2, planeImage.width, planeImage.height); //draw the image ;)
@@ -206,9 +200,9 @@ function playSound(which){
     var buttonSound = new Audio('/public/sounds/button.mp3');
     buttonSound.play();
   }else if(which === 'soundtrack'){
-    // var soundTrack = new Audio('/public/sounds/soundtrack.mp3');
-    // soundTrack.loop = true;
-    // soundTrack.volume = 0.4;
-    // soundTrack.play();
+    var soundTrack = new Audio('/public/sounds/soundtrack.mp3');
+    soundTrack.loop = true;
+    soundTrack.volume = 0.4;
+    soundTrack.play();
   }
 }
