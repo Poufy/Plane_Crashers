@@ -3,50 +3,10 @@ body {
   margin: 0;
   padding: 0;
 	width: 100wh;
-	height: 90vh;
-	color: #fff;
-	background: linear-gradient(-45deg, #32ff7e, #4cd137, #273c75, #2f3640);
-	background-size: 400% 400%;
-	-webkit-animation: Gradient 15s ease infinite;
-	-moz-animation: Gradient 15s ease infinite;
-	animation: Gradient 15s ease infinite;
+  background: url('/public/images/mainbackground.JPG');
+  color:white;
 }
 
-@-webkit-keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
-}
-
-@-moz-keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
-}
-
-@keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
-}
 
 #container{
   float: right;
@@ -58,6 +18,7 @@ body {
   border: 1px solid black;
   margin: 4px;
   border-radius: 5px;
+  opacity: 0.9;
 }
 
 #chat-text{
@@ -67,7 +28,8 @@ body {
   border:1px solid black;
   border-radius: 5px;
   margin:4px;
-  background-image: url('/public/images/background.JPG');
+  background: #343434;
+  opacity: 0.8;
   background-position:center;
   font-family: Arial;
   font-size: 18px;
@@ -89,8 +51,9 @@ body {
   padding-left: 3px;
   border:1px solid black;
   border-radius: 5px;
-  background-image: url('/public/images/background.JPG');
+  background: #343434;
   background-position:center;
+  opacity: 0.8;
 }
 
 #connected-players::-webkit-scrollbar{
@@ -104,12 +67,13 @@ body {
   width: 300px;
   padding: 40px;
   position: absolute;
-  background-image: url('/public/images/background.JPG');
+  background: black;
   top: 50%;
   left: 50%;
+  border: 3px solid green;
   transform: translate(-50%,-50%);
   text-align: center;
-  border-radius: 6px;
+  border-radius: 10%;
 }
 #sign h1, #register h1{
   color: white;

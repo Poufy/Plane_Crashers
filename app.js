@@ -144,7 +144,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('disconnect', function() {
         var ship = gameState.ships[socket.id];
         if(checkValidity(ship)){
-        db.collection('account').update({username: ship.userName},{score:ship.score});
+        db.collection('account').update({'username': ship.userName},{$set: {'score':ship.score}});
         delete gameState.ships[socket.id];
         //emiting the list after someone disconnects for it to be updated.
         io.sockets.emit('newPlayer', gameState.ships);

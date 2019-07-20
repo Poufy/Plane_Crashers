@@ -192,7 +192,8 @@ document.onkeyup = function(event) {
 }
 
 function drawBackground(){
-    ctx.drawImage(backgroundImage,0,0);
+    ctx.fillStyle= "#343434";
+    ctx.fillRect(0, 0, 876, 640);
 }
 
 function playSound(sound){
@@ -205,7 +206,7 @@ function playSound(sound){
     buttonSound.play();
   }else if(sound === 'soundtrack'){
     soundTrack.loop = true;
-    soundTrack.volume = 0.4;
+    soundTrack.volume = 0.1;
     soundTrack.play();
   }
 }
