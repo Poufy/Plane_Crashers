@@ -18,7 +18,7 @@ app.get('/', function(req, res) {
 app.use('/public', express.static(__dirname + '/public'));
 
 
-server.listen(3000, function() {
+server.listen(3000,function() {
     console.log('listening on port: 3000');
 });
 
@@ -29,7 +29,9 @@ const assert = require('assert');
 const url = 'mongodb+srv://Aldeen:shintariven4%23@planecrashers-aoplv.mongodb.net/test?retryWrites=true&w=majority';
 var db;
 // Use connect method to connect to the Server
-MongoClient.connect(url, function(err, client) {
+//{useNewUrlPraser:true}
+//listen(3000, hostip,function());
+MongoClient.connect(url,function(err, client) {
     assert.equal(null, err);
     console.log('Connection Established');
     db = client.db("planecrashers");
@@ -132,7 +134,7 @@ io.sockets.on('connection', function(socket) {
         //this -80 needs to be removed. This is just a brute force solution to
         //align the heading of the ship with the mouse.
         if(typeof(ship) != 'undefined'){
-          var angle = Math.atan2(data.mouseX - ship.x - 80, -(data.mouseY - ship.y));
+          var angle = Math.atan2(data.mouseX - ship.x, -(data.mouseY - ship.y));
           ship.angle = angle;
         }
 
@@ -140,10 +142,12 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('disconnect', function() {
         var ship = gameState.ships[socket.id];
+        if(checkValidity(ship)){
         db.collection('account').update({username: ship.userName},{$inc:{score:ship.score}});
         delete gameState.ships[socket.id];
         //emiting the list after someone disconnects for it to be updated.
         io.sockets.emit('newPlayer', gameState.ships);
+      }
         console.log('disconnected');
     });
 
@@ -201,4 +205,12 @@ function respawn(ship) {
     ship.y = Math.random * 400;
     ship.hitPoints = 100;
 
+}
+
+//dealing with edge cases where the ship object might be undefined
+function checkValidity(obj){
+  if(typeof(obj) != 'undefined')
+    return true;
+  else
+    return false;
 }
