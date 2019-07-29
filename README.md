@@ -1,11 +1,11 @@
 # Plane_Crashers
-Shooting planes and a side chat made with HTML5 canvas and nodejs for the backend server
+Mini plane shooting game with a side chat made with HTML5 Canvas, SocketIO, and Nodejs for the backend server.
 
 # To run the game
 ```bash
 git clone https://github.com/Poufy/Plane_Crashers.git
 ```
-Navigate to where you cloned the repository 
+Navigate inside the cloned repository
 
 Make sure you have Nodejs and npm installed
 ```bash
@@ -27,15 +27,15 @@ Then open a browser of your choice and navigate to localhost:3000
 
 - [x] Add score/levels on database and on screen for each ship
 
-- [] deal with edge cases like very long names.
+- [ ] deal with edge cases like very long names.
 
 - [x] save score on the database on disconnect.
 
-- [] Add a checkbox on signin to mute the sound track.
+- [ ] Add a checkbox on signin to mute the sound track.
 
 - [x] Add a list of features and controls left to the signin menu.
 
-- [] Add new attacks like shotgun or missiles in the future.
+- [ ] Add new attacks like shotgun or missiles in the future.
 
 
 
