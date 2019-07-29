@@ -15,27 +15,27 @@ node app.js
 Then open a browser of your choice and navigate to localhost:3000
 
 # TODO
-- [x]Bullets collision
+- [x] Bullets collision
 
-- [x]Add user names to ship object
+- [x] Add user names to ship object
 
-- [x]Add time stamps to chat and connected time to connected players
+- [x] Add time stamps to chat and connected time to connected players
 
-- [x]Replace connected players with an image and also add a logo
+- [x] Replace connected players with an image and also add a logo
 
-- [x]Put Entity/Ship/Bullet in seperate files
+- [x] Put Entity/Ship/Bullet in seperate files
 
-- [x]Add score/levels on database and on screen for each ship
+- [x] Add score/levels on database and on screen for each ship
 
-- []deal with edge cases like very long names.
+- [] deal with edge cases like very long names.
 
-- [x]save score on the database on disconnect.
+- [x] save score on the database on disconnect.
 
-- []Add a checkbox on signin to mute the sound track.
+- [] Add a checkbox on signin to mute the sound track.
 
-- [x]Add a list of features and controls left to the signin menu.
+- [x] Add a list of features and controls left to the signin menu.
 
-- []Add new attacks like shotgun or missiles in the future.
+- [] Add new attacks like shotgun or missiles in the future.
 
 
 
