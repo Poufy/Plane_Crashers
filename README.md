@@ -37,6 +37,10 @@ Then open a browser of your choice and navigate to localhost:3000
 
 - [ ] Add new attacks like shotgun or missiles in the future.
 
+- [ ] Host database on my server instead of Atlas.
+
+- [ ] Host the game on my server.
+
 
 
 
