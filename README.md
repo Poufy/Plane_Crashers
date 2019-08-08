@@ -1,41 +1,45 @@
 # Plane_Crashers
-Shooting planes and a side chat made with HTML5 canvas and nodejs for the backend server
+Mini plane shooting game with a side chat made with HTML5 Canvas, SocketIO, and Nodejs for the backend server.
 
 # To run the game
+```bash
 git clone https://github.com/Poufy/Plane_Crashers.git
-
-Navigate to where you cloned the repository 
+```
+Navigate inside the cloned repository
 
 Make sure you have Nodejs and npm installed
-
-In your terminal: npm install --save express socket.io
-
+```bash
+npm install --save express socket.io
 node app.js
-
-then open the browser of your choice and navigate to localhost:3000
+```
+Then open a browser of your choice and navigate to localhost:3000
 
 # TODO
-Bullets collision(done)
+- [x] Bullets collision
 
-Add user names to ship object(done)
+- [x] Add user names to ship object
 
-Add time stamps to chat and connected time to connected players(done)
+- [x] Add time stamps to chat and connected time to connected players
 
-Replace connected players with an image and also add a logo(done)
+- [x] Replace connected players with an image and also add a logo
 
-Put Entity/Ship/Bullet in seperate files(done)
+- [x] Put Entity/Ship/Bullet in seperate files
 
-Add score/levels on database and on screen for each ship(database done but still need score)
+- [x] Add score/levels on database and on screen for each ship
 
-deal with edge cases like very long names.
+- [ ] deal with edge cases like very long names.
 
-save score on the database on disconnect.(done)
+- [x] save score on the database on disconnect.
 
-Add a checkbox on signin to mute the sound track.
+- [ ] Add a checkbox on signin to mute the sound track.
 
-Add a list of features and controls left to the signin menu.
+- [x] Add a list of features and controls left to the signin menu.
 
-Add new attacks like shotgun or missiles in the future.
+- [ ] Add new attacks like shotgun or missiles in the future.
+
+- [ ] Host database on my server instead of Atlas.
+
+- [ ] Host the game on my server.
 
 
 
