@@ -71,14 +71,34 @@ body {
   top: 50%;
   left: 50%;
   border: 3px solid green;
-  transform: translate(-50%,-50%);
+  transform: translate(30%,-50%);
   text-align: center;
   border-radius: 10%;
 }
-#sign h1, #register h1{
+
+#features{
+  width: 300px;
+  padding: 40px;
+  position: absolute;
+  background: black;
+  top: 50%;
+  left: 50%;
+  border: 3px solid green;
+  transform: translate(-125%,-50%);
+  text-align: center;
+  border-radius: 10%;
+}
+#sign h1, #register h1, #features h1{
   color: white;
   text-transform: uppercase;
   font-weight: 500;
+}
+a{
+  color: green;
+  text-decoration: none;
+}
+p{
+  line-height: 27px;
 }
 #sign-username ,#sign-password,#register-username,#register-password{
   border:0;
