@@ -86,19 +86,15 @@ chatForm.onsubmit = function(event) {
 socket.on('messageToClients', function(data) {
   //time stamps for the chat
   var today = new Date();
-  var time = today.getHours() + ":" + today.getMinutes() + ":" +
-      today.getSeconds() + ' ';
-
-    chatText.innerHTML += '<div>' + time + ' ' + data.username + ' : ' +
-        data.message.fontcolor("#32ff7e") + '</div>';
+var time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()} `;
+	chatText.innerHTML += `<div>${time} ${data.username} : ${data.message.fontcolor("#32ff7e")}</div>`
 });
 
 //appending player username to connected users window
 socket.on('newPlayer', function(data) {
     connectedPlayers.innerHTML = '<div>Connected Players</div>';
     for (var id in data) {
-        connectedPlayers.innerHTML += '<div>Username: ' +
-            data[id].userName.fontcolor("#32ff7e") + '</div>'
+	    connectedPlayer.innerHTML += `<div>Username: ${data[id].userName.fontcolor("32ff7e")}</div>`
     }
 });
 
