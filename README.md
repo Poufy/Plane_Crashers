@@ -39,8 +39,11 @@ Then open a browser of your choice and navigate to localhost:3000
 
 - [ ] Host database on my server instead of Atlas.
 
-- [ ] Host the game on my server.
+- [x] Host the game on my server.
 
+- [] Better Routing for logging in and registering.
+
+- [] improve css for smaller windows
 
 
 
