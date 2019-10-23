@@ -9,7 +9,7 @@ Navigate inside the cloned repository
 
 Make sure you have Nodejs and npm installed
 ```bash
-npm install --save express socket.io
+npm install --save express socket.io crypto-js mongodb
 node app.js
 ```
 Then open a browser of your choice and navigate to localhost:3000
