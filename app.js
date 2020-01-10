@@ -1,6 +1,6 @@
-var Entity = require("./Game/Entity.js");
-var Ship = require("./Game/Ship.js");
-var Bullet = require("./Game/Bullet.js");
+var Entity = require("./classes/Entity.js");
+var Ship = require("./classes/Ship.js");
+var Bullet = require("./classes/Bullet.js");
 var SHA256 = require("crypto-js/sha256");
 var config = require("./config")
 //lsof -i | grep mongo to get the port num
@@ -9,7 +9,9 @@ var app = express();
 var server = require("http").Server(app);
 var socketIO = require("socket.io");
 var io = socketIO(server);
-const gameRouter = require("./routes/game");
+var port = 3000 || process.env.PORT;
+var utils = require("./classes/Utils");
+var gameRouter = require("./routes/game");
 var gameState = {
   ships: {}
 };
@@ -17,8 +19,8 @@ var gameState = {
 app.use("/public", express.static(__dirname + "/public"));
 app.use("/", gameRouter);
 
-server.listen(3000, function() {
-  console.log("listening on port: 3000");
+server.listen(port, () => {
+  console.log(`listening on port: ${port}`);
 });
 
 /*MongoDB connection with cloud database*/
@@ -151,7 +153,7 @@ io.sockets.on("connection", function(socket) {
 
   socket.on("disconnect", function() {
     var ship = gameState.ships[socket.id];
-    if (checkValidity(ship)) {
+    if (utils.checkValidity(ship)) {
       db.collection("account").update(
         { username: ship.userName },
         { $set: { score: ship.score } }
@@ -165,7 +167,6 @@ io.sockets.on("connection", function(socket) {
 });
 
 setInterval(function() {
-  var pack = [];
   //moving all ships
   for (var i in gameState.ships) {
     var ship = gameState.ships[i];
@@ -176,14 +177,14 @@ setInterval(function() {
       bullet.checkBounds();
       //checking collision for each bullet with each ship
       for (var k in gameState.ships) {
-        var anotherShip = gameState.ships[k];
+        var enemyShip = gameState.ships[k];
         //checking for collision with other ships but execluding the one that is shooting the bullet which has the socketid k
-        if (checkCollision(anotherShip, bullet) && bullet.parentUniqueId != k) {
+        if (utils.checkCollision(enemyShip, bullet) && bullet.parentUniqueId != k) {
           //increasing the score of the ship that shot the bullet
           var shipThatHit = gameState.ships[bullet.parentUniqueId];
           shipThatHit.score += 4;
           bullet.toRemove = true;
-          if ((anotherShip.hitPoints -= 10) == 0) anotherShip.toRespawn = true;
+          if ((enemyShip.hitPoints -= 10) == 0) enemyShip.toRespawn = true;
         }
       }
       //removing bullets when toRemove is true
@@ -197,27 +198,21 @@ setInterval(function() {
   }
 
   io.sockets.emit("newPosition", gameState);
-}, 1000 / 60);
+}, 1000 / 30);
 
-function getDistance(first, second) {
-  //check distance between two Entities
-  return Math.sqrt(
-    Math.pow(second.x - first.x, 2) + Math.pow(second.y - first.y, 2)
-  );
-}
+// function getDistance(first, second) {
+//   //check distance between two Entities
+//   return Math.sqrt(
+//     Math.pow(second.x - first.x, 2) + Math.pow(second.y - first.y, 2)
+//   );
+// }
+// function checkCollision(first, second) {
+//   return getDistance(first, second) < 25;
+// }
 
-function checkCollision(first, second) {
-  return getDistance(first, second) < 25;
-}
 
-function respawn(ship) {
-  ship.x = Math.random * 400;
-  ship.y = Math.random * 400;
-  ship.hitPoints = 100;
-}
-
-//dealing with edge cases where the ship object might be undefined
-function checkValidity(obj) {
-  if (typeof obj != "undefined") return true;
-  else return false;
-}
+// //dealing with edge cases where the ship object might be undefined
+// function checkValidity(obj) {
+//   if (typeof obj != "undefined") return true;
+//   else return false;
+// }

@@ -10,6 +10,13 @@ function Ship(x, y, angle, username) {
     this.toRespawn = false;
     this.isThrusting = false;
     this.hitPoints = 100;
+    //Place this in ship class
+    this.respawn = function () {
+    this.x = Math.random * 400;
+    this.y = Math.random * 400;
+    this.hitPoints = 100;
+    this.toRespawn = false;
+}
     this.update = function(){
       if (this.isThrusting) {
           this.velocity += 1;
@@ -26,10 +33,10 @@ function Ship(x, y, angle, username) {
           }
       }
       if (this.toRespawn) {
-          this.x = 100;
-          this.y = 100;
-          this.hitPoints = 100;
-          this.toRespawn = false;
+        this.x = Math.random() * 500;
+        this.y = Math.random () * 300;
+        this.hitPoints = 100;
+        this.toRespawn = false;
       }
     }
   }
