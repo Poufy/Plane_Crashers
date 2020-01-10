@@ -9,10 +9,9 @@ function Ship(x, y, angle, username) {
     this.bullets = {};
     this.toRespawn = false;
     this.isThrusting = false;
-    this.hitPoints = 100;
     this.update = function(){
       if (this.isThrusting) {
-          this.velocity += 1;
+          this.velocity += 0.4;
           this.x += this.velocity * Math.sin(this.angle);
           this.y -= this.velocity * Math.cos(this.angle);
           if (this.velocity >= this.maxVelocity) {
@@ -26,10 +25,10 @@ function Ship(x, y, angle, username) {
           }
       }
       if (this.toRespawn) {
-          this.x = 100;
-          this.y = 100;
-          this.hitPoints = 100;
-          this.toRespawn = false;
+        this.x = Math.random() * 500;
+        this.y = Math.random () * 300;
+        this.hitPoints = 100;
+        this.toRespawn = false;
       }
     }
   }

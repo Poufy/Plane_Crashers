@@ -11,7 +11,9 @@ body {
 
 
 #container{
-  float: right;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 }
 #game{
   display: none;
@@ -23,27 +25,13 @@ body {
   opacity: 0.9;
 }
 
-#chat-text{
-  width: 464px;
-  height:400px;
-  overflow-y:scroll;
-  border:1px solid black;
-  border-radius: 5px;
-  margin:4px;
-  background: #343434;
-  opacity: 0.8;
-  background-position:center;
-  font-family: Arial;
-  font-size: 18px;
-}
-#chat-text::-webkit-scrollbar{
-  width:0;
-  height: 0;
-}
-#chat-input{
-  width: 464px;
-  margin-bottom:4px;
-  border-radius: 5px;
+#chat-form{
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translate(-50%, -50%);
+  background:#063;
+  margin: 0 auto;
 }
 
 #connected-players{
@@ -135,4 +123,20 @@ p{
 
 #sign-signin:hover,#sign-signup:hover,#register-signup:hover{
   background: #2ecc71;
+}
+
+#chat-text{
+  position: fixed;
+  width: 200px;
+  height:200px;
+  top: 0px;
+  right: 0px;
+  overflow-y:scroll;
+  border:1px solid #444444;
+  border-radius: 5px;
+  margin:4px;
+  background: transparent;
+  opacity: 0.8;
+  font-family: Arial;
+  font-size: 18px;
 }

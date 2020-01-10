@@ -1,5 +1,5 @@
-var chatText = document.getElementById("chat-text");
 var chatInput = document.getElementById("chat-input");
+var chatText = document.getElementById("chat-text");
 var chatForm = document.getElementById("chat-form");
 var connectedPlayers = document.getElementById("connected-players");
 var canvas = document.getElementById("ctx");
@@ -11,6 +11,7 @@ var socket = io();
  mouseY values when cursor is initially off the canvas.*/
 var mouseX = 0;
 var mouseY = 0;
+const planeVertex = 25;
 
 /*Handling the login*/
 var sign = document.getElementById("sign");
@@ -71,26 +72,23 @@ socket.on("signUpValidation", function(data) {
 });
 
 /*Handling the chat*/
-// chatForm.onsubmit = function(event) {
-//   event.preventDefault(); //prevent the browser from refreshing.
-//   if (chatInput.value == "!soundtrack") {
-//     toggleSoundTrack();
-//   }
-//   socket.emit("messageToServer", {
-//     message: chatInput.value,
-//     username: signInUsername.value
-//   });
-//   chatInput.value = "";
-// };
+chatForm.onsubmit = function(event) {
+  event.preventDefault(); //prevent the browser from refreshing.
+  if (chatInput.value == "!soundtrack") {
+    toggleSoundTrack();
+  }
+  socket.emit("messageToServer", {
+    message: chatInput.value,
+    username: signInUsername.value
+  });
+  chatInput.value = "";
+};
 
-// socket.on("messageToClients", function(data) {
-//   //time stamps for the chat
-//   var today = new Date();
-//   var time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()} `;
-//   chatText.innerHTML += `<div>${time} ${
-//     data.username
-//   } : ${data.message.fontcolor("#32ff7e")}</div>`;
-// });
+socket.on("messageToClients", function(data) {
+  chatText.innerHTML += `<div> ${
+    data.username
+  } : ${data.message.fontcolor("#32ff7e")}</div>`;
+});
 
 //appending player username to connected users window
 // socket.on("newPlayer", function(data) {
@@ -102,17 +100,6 @@ socket.on("signUpValidation", function(data) {
 //     )}</div>`;
 //   }
 // });
-
-/*Loading the images*/
-var Img = {};
-const backgroundImage = (Img.background = new Image());
-backgroundImage.src = "/public/images/background.JPG";
-const planeImage = new Image();
-planeImage.src = "/public/images/smallPlane.png";
-const bulletImage = new Image();
-bulletImage.src = "/public/images/bullet.png";
-const planeVertex = 30;
-
 
 /*Drawing*/
 
@@ -126,21 +113,18 @@ socket.on("newPosition", function(data) {
   for (var i in data.ships) {
     var ship = data.ships[i];
     //drawing the ships
-    var healthBarWidth = (30 * ship.hitPoints) / 100;
-
     ctx.save();
-    ctx.translate(    ship.x,ship.y    );
+    ctx.translate(ship.x, ship.y);
     ctx.rotate(ship.angle);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(planeVertex, planeVertex);
-    ctx.lineTo(-planeVertex, planeVertex);
+    ctx.lineTo(planeVertex/2, planeVertex);
+    ctx.lineTo(-planeVertex/2, planeVertex);
     ctx.closePath();
     ctx.rotate(Math.PI / 1);
-    ctx.fillStyle = "#FFCC00";
+    ctx.fillStyle = "green";
     ctx.fill();
 
-    
     // ctx.drawImage(
     //   planeImage,
     //   -planeImage.width / 2,
@@ -151,7 +135,7 @@ socket.on("newPosition", function(data) {
     ctx.restore();
 
     ctx.save();
-    ctx.translate(ship.x - planeVertex , ship.y - planeVertex * 1.5 );
+    ctx.translate(ship.x - planeVertex, ship.y - planeVertex * 1.5);
     //drawing healthbars
     ctx.fillStyle = "red";
     ctx.fillRect(-15, 0, 75, 5);
@@ -164,17 +148,15 @@ socket.on("newPosition", function(data) {
 
     for (var k in ship.bullets) {
       ctx.save();
-      ctx.translate(
-        ship.bullets[k].x ,
-        ship.bullets[k].y
-      );
-      ctx.beginPath(); 
-      ctx.arc(
-        0,
-        0,
-        10, 0, 2 * Math.PI
-      );
-      ctx.fillStyle = 'green';
+      ctx.translate(ship.bullets[k].x, ship.bullets[k].y);
+      ctx.beginPath();
+      if(ship.bullets[k].bulletType == "BigBullet"){
+        ctx.arc(0, 0, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = "red";
+      }else{
+        ctx.arc(0, 0, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = "yellow";
+      }
       ctx.fill();
       ctx.restore();
     }
@@ -186,14 +168,12 @@ socket.on("playSound", function() {
 });
 
 function drawHealthBars(context) {
-  var healthBarWidth = (30 * ship.hitPoints) / 100;
   ctx.save();
   ctx.translate(ship.x + 40, ship.y);
   ctx.fillStyle = "red";
   ctx.fillRect(0, 0, 75, 5);
   ctx.fillStyle = "green";
   ctx.fillRect(0, 0, (75 * ship.hitPoints) / 100, 5);
-  ctx.restore();
 }
 
 //emiting the mouse Coordinates to the server to calculate the angle there.
@@ -203,24 +183,32 @@ document.addEventListener("mousemove", function(event) {
 });
 
 /*Handling the key presses*/
+document.onmousedown = function(event) {
+  if (allowEventEmition) socket.emit("fireNormalBullet");
+};
+
+document.addEventListener("keypress", function(event) {
+  if (event.keyCode == 32 && allowEventEmition) {
+    socket.emit("fireBigBullet");
+  }
+})
+
+//Moving forward on key hold
 document.onkeydown = function(event) {
   if (event.keyCode === 87 && allowEventEmition) socket.emit("thrust", true);
 };
-
-document.onmousedown = function(event) {
-  if (allowEventEmition) socket.emit("fire");
-};
+//Moving stopping gradually on key release
 document.onkeyup = function(event) {
   if (event.keyCode === 87 && allowEventEmition) socket.emit("thrust", false);
 };
 
 function drawBackground() {
-    canvas.width = document.body.clientWidth; //document.width is obsolete
-    canvas.height = document.body.clientHeight; //document.height is obsolete
-    canvasW = canvas.width;
-    canvasH = canvas.height;
-    ctx.fillStyle = "#fffff";
-    ctx.fillRect(0, 0, canvasW, canvasH);
+  canvas.width = document.body.clientWidth;
+  canvas.height = document.body.clientHeight;
+  canvasW = canvas.width;
+  canvasH = canvas.height;
+  ctx.fillStyle = "#fffff";
+  ctx.fillRect(0, 0, canvasW, canvasH);
 }
 
 function playSound(sound) {

@@ -31,19 +31,12 @@ Then open a browser of your choice and navigate to localhost:3000
 
 - [x] save score on the database on disconnect.
 
-- [ ] Add a checkbox on signin to mute the sound track.
-
 - [x] Add a list of features and controls left to the signin menu.
 
 - [ ] Add new attacks like shotgun or missiles in the future.
 
-- [ ] Host database on my server instead of Atlas.
+- [x] Host the game on server.
 
-- [x] Host the game on my server.
-
-- [] Better Routing for logging in and registering.
-
-- [] improve css for smaller windows
-
+- [ ] Clean up the app class, add a server.js file as an entry point to the game.
 
 
