@@ -4,7 +4,7 @@ function Bullet (x, y, angle, parentUniqueId) {
     this.toRemove = false;
     this.parentUniqueId = parentUniqueId;
     this.checkBounds = function() {
-        if (this.x > 850 || this.y > 670 || this.x < -40 || this.y < -40)
+        if (this.x > 1800 || this.y > 960 || this.x < -40 || this.y < -40)
             this.toRemove = true;
     }
 };

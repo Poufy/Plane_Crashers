@@ -2,6 +2,7 @@ var Entity = require("./Game/Entity.js");
 var Ship = require("./Game/Ship.js");
 var Bullet = require("./Game/Bullet.js");
 var SHA256 = require("crypto-js/sha256");
+var config = require("./config")
 //lsof -i | grep mongo to get the port num
 var express = require("express");
 var app = express();
@@ -24,8 +25,7 @@ server.listen(3000, function() {
 const MongoClient = require("mongodb").MongoClient;
 const assert = require("assert");
 // Connection URL
-const url =
-  "mongodb+srv://Aldeen:shintariven4%23@planecrashers-aoplv.mongodb.net/test?retryWrites=true&w=majority";
+const url = config.url;
 var db;
 // Use connect method to connect to the Server
 //{useNewUrlPraser:true}

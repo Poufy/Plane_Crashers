@@ -2,7 +2,8 @@ var chatText = document.getElementById("chat-text");
 var chatInput = document.getElementById("chat-input");
 var chatForm = document.getElementById("chat-form");
 var connectedPlayers = document.getElementById("connected-players");
-var ctx = document.getElementById("ctx").getContext("2d");
+var canvas = document.getElementById("ctx");
+var ctx = canvas.getContext("2d");
 var soundTrack = new Audio("/public/sounds/soundtrack.mp3");
 ctx.font = "bold 10pt Courier";
 var socket = io();
@@ -70,37 +71,37 @@ socket.on("signUpValidation", function(data) {
 });
 
 /*Handling the chat*/
-chatForm.onsubmit = function(event) {
-  event.preventDefault(); //prevent the browser from refreshing.
-  if (chatInput.value == "!soundtrack") {
-    toggleSoundTrack();
-  }
-  socket.emit("messageToServer", {
-    message: chatInput.value,
-    username: signInUsername.value
-  });
-  chatInput.value = "";
-};
+// chatForm.onsubmit = function(event) {
+//   event.preventDefault(); //prevent the browser from refreshing.
+//   if (chatInput.value == "!soundtrack") {
+//     toggleSoundTrack();
+//   }
+//   socket.emit("messageToServer", {
+//     message: chatInput.value,
+//     username: signInUsername.value
+//   });
+//   chatInput.value = "";
+// };
 
-socket.on("messageToClients", function(data) {
-  //time stamps for the chat
-  var today = new Date();
-  var time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()} `;
-  chatText.innerHTML += `<div>${time} ${
-    data.username
-  } : ${data.message.fontcolor("#32ff7e")}</div>`;
-});
+// socket.on("messageToClients", function(data) {
+//   //time stamps for the chat
+//   var today = new Date();
+//   var time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()} `;
+//   chatText.innerHTML += `<div>${time} ${
+//     data.username
+//   } : ${data.message.fontcolor("#32ff7e")}</div>`;
+// });
 
 //appending player username to connected users window
-socket.on("newPlayer", function(data) {
-  connectedPlayers.innerHTML = "<div>Connected Players</div>";
-  for (var id in data) {
-    console.log(data[id].userName);
-    connectedPlayers.innerHTML += `<div>Username: ${data[id].userName.fontcolor(
-      "32ff7e"
-    )}</div>`;
-  }
-});
+// socket.on("newPlayer", function(data) {
+//   connectedPlayers.innerHTML = "<div>Connected Players</div>";
+//   for (var id in data) {
+//     console.log(data[id].userName);
+//     connectedPlayers.innerHTML += `<div>Username: ${data[id].userName.fontcolor(
+//       "32ff7e"
+//     )}</div>`;
+//   }
+// });
 
 /*Loading the images*/
 var Img = {};
@@ -110,6 +111,8 @@ const planeImage = new Image();
 planeImage.src = "/public/images/smallPlane.png";
 const bulletImage = new Image();
 bulletImage.src = "/public/images/bullet.png";
+const planeVertex = 30;
+
 
 /*Drawing*/
 
@@ -126,27 +129,34 @@ socket.on("newPosition", function(data) {
     var healthBarWidth = (30 * ship.hitPoints) / 100;
 
     ctx.save();
-    ctx.translate(
-      ship.x + planeImage.width / 2,
-      ship.y + planeImage.height / 2
-    );
+    ctx.translate(    ship.x,ship.y    );
     ctx.rotate(ship.angle);
-    ctx.drawImage(
-      planeImage,
-      -planeImage.width / 2,
-      -planeImage.height / 2,
-      planeImage.width,
-      planeImage.height
-    ); //draw the image ;)
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(planeVertex, planeVertex);
+    ctx.lineTo(-planeVertex, planeVertex);
+    ctx.closePath();
+    ctx.rotate(Math.PI / 1);
+    ctx.fillStyle = "#FFCC00";
+    ctx.fill();
+
+    
+    // ctx.drawImage(
+    //   planeImage,
+    //   -planeImage.width / 2,
+    //   -planeImage.height / 2,
+    //   planeImage.width,
+    //   planeImage.height
+    // ); //draw the image ;)
     ctx.restore();
 
     ctx.save();
-    ctx.translate(ship.x + 40, ship.y);
+    ctx.translate(ship.x - planeVertex , ship.y - planeVertex * 1.5 );
     //drawing healthbars
     ctx.fillStyle = "red";
-    ctx.fillRect(0, 0, 75, 5);
+    ctx.fillRect(-15, 0, 75, 5);
     ctx.fillStyle = "green";
-    ctx.fillRect(0, 0, (75 * ship.hitPoints) / 100, 5);
+    ctx.fillRect(-15, 0, (75 * ship.hitPoints) / 100, 5);
     //drawing score
     ctx.fillText(ship.score, 0, -4);
     ctx.fillText(ship.userName, 30, -4);
@@ -155,15 +165,17 @@ socket.on("newPosition", function(data) {
     for (var k in ship.bullets) {
       ctx.save();
       ctx.translate(
-        ship.bullets[k].x + planeImage.width / 2,
-        ship.bullets[k].y + planeImage.height / 2
+        ship.bullets[k].x ,
+        ship.bullets[k].y
       );
-      ctx.rotate(ship.bullets[k].angle);
-      ctx.drawImage(
-        bulletImage,
-        -planeImage.width / 2 + bulletImage.width / 2 + 21,
-        -planeImage.height / 2 - bulletImage.height / 2
+      ctx.beginPath(); 
+      ctx.arc(
+        0,
+        0,
+        10, 0, 2 * Math.PI
       );
+      ctx.fillStyle = 'green';
+      ctx.fill();
       ctx.restore();
     }
   }
@@ -203,8 +215,12 @@ document.onkeyup = function(event) {
 };
 
 function drawBackground() {
-  ctx.fillStyle = "#343434";
-  ctx.fillRect(0, 0, 876, 640);
+    canvas.width = document.body.clientWidth; //document.width is obsolete
+    canvas.height = document.body.clientHeight; //document.height is obsolete
+    canvasW = canvas.width;
+    canvasH = canvas.height;
+    ctx.fillStyle = "#fffff";
+    ctx.fillRect(0, 0, canvasW, canvasH);
 }
 
 function playSound(sound) {
