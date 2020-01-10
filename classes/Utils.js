@@ -5,7 +5,7 @@ function getDistance(first, second) {
     );
   }
   function checkCollision(first, second) {
-    return getDistance(first, second) < 25;
+    return getDistance(first, second) < 20;
   }
   
   

@@ -6,10 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plane Crashers</title>
     <link rel="stylesheet" type="text/css" href="/public/css/style.css">
-    <div id="signincontainer">
+    <div id="signincontainer" style="position: relative;">
         <div id="image">
-            <img src="/public/images/logo.png" style="display:block;margin:auto;">
+            <img src="/public/images/logo.png" style="position: fixed;top:0;
+            
+            left: 0;
+            right: 0;;display:block;margin:auto;z-index: 9999;">
         </div>
+        <img src="/public/images/mainbackground.jpg" style="display:block;margin:auto;margin: 0 auto;
+        max-height: 100%;
+        max-width: 100%;">
         <div id="sign">
             <!--add the logo above and make it prettier-->
             <h1>Login</h1>
@@ -25,9 +31,9 @@
             <p>
               Type !soundtrack in the chat window to toggle the soundtrack.<br>
               Passwords are encrypted before being stored in the database.<br>
-              The game is hosted on my personal Apache Web Server.<br>
-              The game is using a MongoDB database that is stored on Atlas for managing the data.<br>
-              <a href="www.nooyad.tk">Visit My Personal Website</a> <br>
+              The game is hosted on a raspberrypi so it might be slow.<br>
+              Press Space to fire special attack.<br>
+              <a href="www.nooyad.xyz">My Personal Website</a> <br>
 
             </p>
 
@@ -44,23 +50,16 @@
 
     <div id="game">
         <div id="container">
+            <canvas id="ctx" width="auto" height="auto"></canvas>
             <!-- <img src="/public/images/logo.png"> -->
-            <!-- 
-            <div id="chat-text">
-            </div>
-            <div id="form">
                 <form id="chat-form">-->
                     <!-- reduce size of input space to 400 and add a button -->
-                    <!-- <input id="chat-input" type="text" placeholder="Place your messages here"></input>
+                     <input id="chat-input" type="text" placeholder="Place your messages here"></input>
                 </form>
-            </div>
-            <div id="connected-players"> Connected Players</div>
-        -->
-        </div> 
-
-        <div>
-            <canvas id="ctx" width="auto" height="auto"></canvas>
-        </div>
+                <div id="chat-text"></div>
+            <!-- <div id="connected-players"> Connected Players</div> -->
+        
+        </div>         
     </div>
 
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>

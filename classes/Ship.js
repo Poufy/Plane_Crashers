@@ -9,17 +9,9 @@ function Ship(x, y, angle, username) {
     this.bullets = {};
     this.toRespawn = false;
     this.isThrusting = false;
-    this.hitPoints = 100;
-    //Place this in ship class
-    this.respawn = function () {
-    this.x = Math.random * 400;
-    this.y = Math.random * 400;
-    this.hitPoints = 100;
-    this.toRespawn = false;
-}
     this.update = function(){
       if (this.isThrusting) {
-          this.velocity += 1;
+          this.velocity += 0.4;
           this.x += this.velocity * Math.sin(this.angle);
           this.y -= this.velocity * Math.cos(this.angle);
           if (this.velocity >= this.maxVelocity) {

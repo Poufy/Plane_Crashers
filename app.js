@@ -1,6 +1,7 @@
 var Entity = require("./classes/Entity.js");
 var Ship = require("./classes/Ship.js");
 var Bullet = require("./classes/Bullet.js");
+var BigBullet = require("./classes/BigBullet")
 var SHA256 = require("crypto-js/sha256");
 var config = require("./config")
 //lsof -i | grep mongo to get the port num
@@ -21,7 +22,7 @@ app.use("/", gameRouter);
 
 server.listen(port, () => {
   console.log(`listening on port: ${port}`);
-});
+}); 
 
 /*MongoDB connection with cloud database*/
 const MongoClient = require("mongodb").MongoClient;
@@ -121,7 +122,7 @@ io.sockets.on("connection", function(socket) {
     });
   });
 
-  socket.on("fire", function() {
+  socket.on("fireNormalBullet", function() {
     var ship = gameState.ships[socket.id];
     ship.bullets[Math.random()] = new Bullet(
       ship.x,
@@ -130,11 +131,30 @@ io.sockets.on("connection", function(socket) {
       socket.id
     );
     socket.emit("playSound");
-    socket.emit("updateScore", ship.score);
+    //!Not sure if this is needed
+    //socket.emit("updateScore", ship.score);
+  });
+
+  socket.on("fireBigBullet", function() {
+    var ship = gameState.ships[socket.id];
+    ship.bullets[Math.random()] = new BigBullet(
+      ship.x,
+      ship.y,
+      ship.angle,
+      socket.id
+    );
+    socket.emit("playSound");
+    //!Not sure if this is needed
+    //socket.emit("updateScore", ship.score);
   });
 
   socket.on("thrust", function(data) {
-    gameState.ships[socket.id].isThrusting = data;
+    try {
+      gameState.ships[socket.id].isThrusting = data;
+    }
+    catch(err) {
+      console.log(err);
+    }
   });
 
   socket.on("messageToServer", function(data) {
@@ -168,6 +188,7 @@ io.sockets.on("connection", function(socket) {
 
 setInterval(function() {
   //moving all ships
+  if(Object.keys(gameState.ships).length !== 0){
   for (var i in gameState.ships) {
     var ship = gameState.ships[i];
     ship.update();
@@ -175,6 +196,10 @@ setInterval(function() {
     for (var j in ship.bullets) {
       var bullet = ship.bullets[j];
       bullet.checkBounds();
+      if(bullet.constructor.name === "BigBullet"){
+        bullet.checkRange();
+      }
+      
       //checking collision for each bullet with each ship
       for (var k in gameState.ships) {
         var enemyShip = gameState.ships[k];
@@ -183,8 +208,13 @@ setInterval(function() {
           //increasing the score of the ship that shot the bullet
           var shipThatHit = gameState.ships[bullet.parentUniqueId];
           shipThatHit.score += 4;
-          bullet.toRemove = true;
-          if ((enemyShip.hitPoints -= 10) == 0) enemyShip.toRespawn = true;
+          if(bullet.constructor.name === "BigBullet"){
+            bullet.toExplode = true;
+          }else{ 
+            bullet.toRemove = true;
+          }
+          if ((enemyShip.hitPoints -= 10) == 0)
+              enemyShip.toRespawn = true;
         }
       }
       //removing bullets when toRemove is true
@@ -192,27 +222,16 @@ setInterval(function() {
         delete ship.bullets[j];
         continue;
       }
+      if (ship.bullets[j].toExplode) {
+        ship.bullets[j].explode();
+        continue;
+      }
       //moving the bullet
       ship.bullets[j].update();
     }
   }
 
+
   io.sockets.emit("newPosition", gameState);
-}, 1000 / 30);
-
-// function getDistance(first, second) {
-//   //check distance between two Entities
-//   return Math.sqrt(
-//     Math.pow(second.x - first.x, 2) + Math.pow(second.y - first.y, 2)
-//   );
-// }
-// function checkCollision(first, second) {
-//   return getDistance(first, second) < 25;
-// }
-
-
-// //dealing with edge cases where the ship object might be undefined
-// function checkValidity(obj) {
-//   if (typeof obj != "undefined") return true;
-//   else return false;
-// }
+}
+}, 1000 / 60);
