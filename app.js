@@ -223,8 +223,9 @@ setInterval(function() {
         continue;
       }
       if (ship.bullets[j].toExplode) {
-        ship.bullets[j].explode();
-        continue;
+          ship.bullets[j].explode().forEach(smallBullet => {
+            ship.bullets[Math.random()] = smallBullet;
+        })
       }
       //moving the bullet
       ship.bullets[j].update();
