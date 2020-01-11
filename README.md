@@ -27,16 +27,18 @@ Then open a browser of your choice and navigate to localhost:3000
 
 - [x] Add score/levels on database and on screen for each ship
 
-- [ ] deal with edge cases like very long names.
-
 - [x] save score on the database on disconnect.
 
 - [x] Add a list of features and controls left to the signin menu.
 
-- [ ] Add new attacks like shotgun or missiles in the future.
+- [x] Add new attacks like shotgun or missiles in the future.
 
 - [x] Host the game on server.
 
-- [ ] Clean up the app class, add a server.js file as an entry point to the game.
+- [ ] Use Docker to deploy the game on server.
+
+- [ ] Use democracy JS to host the game on a distributed network.
+
+- [ ] Optimize the node server for performance.
 
 
