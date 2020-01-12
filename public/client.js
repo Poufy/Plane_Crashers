@@ -32,7 +32,7 @@ playSound("soundtrack");
 /*Here we send the username and the password entered by the client to the server
  to be validated there and then we recieve wether the validation was successful
  or not*/
-signin.onclick = function() {
+signin.onclick = function () {
   playSound("button");
   socket.emit("signIn", {
     username: signInUsername.value,
@@ -40,13 +40,13 @@ signin.onclick = function() {
   });
 };
 
-signup.onclick = function() {
+signup.onclick = function () {
   playSound("button");
   sign.style.display = "none";
   register.style.display = "inline";
 };
 
-registerSignup.onclick = function() {
+registerSignup.onclick = function () {
   playSound("button");
   socket.emit("signUp", {
     username: registerUsername.value,
@@ -55,7 +55,8 @@ registerSignup.onclick = function() {
   register.style.display = "none";
   sign.style.display = "inline";
 };
-socket.on("signInValidation", function(data) {
+
+socket.on("signInValidation", function (data) {
   if (data) {
     signincontainer.style.display = "none";
     document.body.style.backgroundColor = "white";
@@ -66,13 +67,13 @@ socket.on("signInValidation", function(data) {
   }
 });
 
-socket.on("signUpValidation", function(data) {
+socket.on("signUpValidation", function (data) {
   if (data) alert("SignUp successful!");
   else alert("Username is already taken!");
 });
 
 /*Handling the chat*/
-chatForm.onsubmit = function(event) {
+chatForm.onsubmit = function (event) {
   event.preventDefault(); //prevent the browser from refreshing.
   if (chatInput.value == "!soundtrack") {
     toggleSoundTrack();
@@ -84,10 +85,10 @@ chatForm.onsubmit = function(event) {
   chatInput.value = "";
 };
 
-socket.on("messageToClients", function(data) {
+socket.on("messageToClients", function (data) {
   chatText.innerHTML += `<div> ${
     data.username
-  } : ${data.message.fontcolor("#32ff7e")}</div>`;
+    } : ${data.message.fontcolor("#32ff7e")}</div>`;
 });
 
 //appending player username to connected users window
@@ -103,7 +104,7 @@ socket.on("messageToClients", function(data) {
 
 /*Drawing*/
 
-socket.on("newPosition", function(data) {
+socket.on("newPosition", function (data) {
   if (allowEventEmition)
     socket.emit("mouseCoordinates", {
       mouseX: mouseX,
@@ -118,20 +119,12 @@ socket.on("newPosition", function(data) {
     ctx.rotate(ship.angle);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(planeVertex/2, planeVertex);
-    ctx.lineTo(-planeVertex/2, planeVertex);
+    ctx.lineTo(planeVertex / 2, planeVertex);
+    ctx.lineTo(-planeVertex / 2, planeVertex);
     ctx.closePath();
-    ctx.rotate(Math.PI / 1);
+    ctx.rotate(Math.PI);
     ctx.fillStyle = "green";
     ctx.fill();
-
-    // ctx.drawImage(
-    //   planeImage,
-    //   -planeImage.width / 2,
-    //   -planeImage.height / 2,
-    //   planeImage.width,
-    //   planeImage.height
-    // ); //draw the image ;)
     ctx.restore();
 
     ctx.save();
@@ -150,10 +143,10 @@ socket.on("newPosition", function(data) {
       ctx.save();
       ctx.translate(ship.bullets[k].x, ship.bullets[k].y);
       ctx.beginPath();
-      if(ship.bullets[k].bulletType == "BigBullet"){
+      if (ship.bullets[k].bulletType == "BigBullet") {
         ctx.arc(0, 0, 20, 0, 2 * Math.PI);
         ctx.fillStyle = "red";
-      }else{
+      } else {
         ctx.arc(0, 0, 5, 0, 2 * Math.PI);
         ctx.fillStyle = "yellow";
       }
@@ -163,7 +156,7 @@ socket.on("newPosition", function(data) {
   }
 });
 
-socket.on("playSound", function() {
+socket.on("playSound", function () {
   playSound("gun");
 });
 
@@ -177,28 +170,28 @@ function drawHealthBars(context) {
 }
 
 //emiting the mouse Coordinates to the server to calculate the angle there.
-document.addEventListener("mousemove", function(event) {
+document.addEventListener("mousemove", function (event) {
   mouseX = event.clientX;
   mouseY = event.clientY;
 });
 
 /*Handling the key presses*/
-document.onmousedown = function(event) {
+document.onmousedown = function (event) {
   if (allowEventEmition) socket.emit("fireNormalBullet");
 };
 
-document.addEventListener("keypress", function(event) {
+document.addEventListener("keypress", function (event) {
   if (event.keyCode == 32 && allowEventEmition) {
     socket.emit("fireBigBullet");
   }
 })
 
 //Moving forward on key hold
-document.onkeydown = function(event) {
+document.onkeydown = function (event) {
   if (event.keyCode === 87 && allowEventEmition) socket.emit("thrust", true);
 };
 //Moving stopping gradually on key release
-document.onkeyup = function(event) {
+document.onkeyup = function (event) {
   if (event.keyCode === 87 && allowEventEmition) socket.emit("thrust", false);
 };
 
